@@ -1,18 +1,20 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React from "react";
+import { View, Text, StyleSheet } from "react-native";
+import { StatusBar } from "expo-status-bar";
 
 export default function ActivitiesScreen() {
-    return (
-        <View style={styles.screenContainer}>
-        <Text>ATIVIDADES</Text>
-        </View>
-    );
+  return (
+    <View style={styles.screenContainer}>
+      <Text>ATIVIDADES</Text>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-    screenContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#fff',
-    }})
+  screenContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
+  },
+});

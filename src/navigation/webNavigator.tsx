@@ -18,7 +18,7 @@ export default function App() {
   return (
     <View>
       <StatusBar style="light"/>
-      <DrawerNavigator />
+      {/* <DrawerNavigator /> */}
     </View>
   );
 }

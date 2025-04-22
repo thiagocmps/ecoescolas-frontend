@@ -1,9 +1,13 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
-import { Platform } from 'react-native';
-import WebNavigator from "../navigation/webNavigator";
-import BottomNavigator from "../navigation/bottomNavigator";
-
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import Routes from "../navigation/routes"; // Importando o arquivo de rotas
+import Toast from "react-native-toast-message";
 export default function App() {
-  return Platform.OS === "web" ? <WebNavigator/> : <BottomNavigator/>;
+  /*  return Platform.OS === "web" ? <WebNavigator/> : <BottomNavigator/>; */
+  return (
+    <NavigationContainer>
+      <Routes />
+      <Toast />
+    </NavigationContainer>
+  );
 }

@@ -2,6 +2,9 @@
   "expo": {
     "name": "ecoescolas-frontend",
     "slug": "ecoescolas-frontend",
+    "extra": {
+      "API_BASE_URL": "ashamed-elfrida-thiagocmps-a0126839.koyeb.app"
+    },
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
