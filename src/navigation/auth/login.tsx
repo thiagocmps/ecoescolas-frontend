@@ -73,9 +73,13 @@ export default function LoginScreen() {
       <View style={styles.imageContainer}>
         <Image source={logo} style={{ width: 200, height: 200 }} />
       </View>
-      <View style={styles.inputContainer}>
+      <View
+        style={[
+          styles.inputContainer,
+          {  width: isLargeScreen ? "35%" : "100%" },
+        ]}
+       >
         <TextInput
-          style={{ width: isLargeScreen ? 500 : "100%" }}
           placeholder="Digite o seu email da ESMAD"
           label="Email:"
           value={email}
@@ -84,7 +88,6 @@ export default function LoginScreen() {
         />
         <TextInput
           placeholder="Digite sua palavra-passe"
-          style={{ width: isLargeScreen ? 500 : "100%" }}
           label="Palavra-passe:"
           secureTextEntry={true}
           value={password}
@@ -94,7 +97,7 @@ export default function LoginScreen() {
       </View>
       <View style={styles.buttonContainer}>
         <Button
-          style={{ width: isLargeScreen ? 500 : "100%" }}
+          style={{ width: isLargeScreen ? "35%" : "100%" }}
           title="Entrar"
           onPress={() => loginAuth()}
           icon="log-in"
@@ -104,7 +107,7 @@ export default function LoginScreen() {
         />
         <Button
           title="Não tem conta? Registre-se"
-          style={{ width: isLargeScreen ? 500 : "100%" }}
+          style={{ width: isLargeScreen ? "35%" : "100%" }}
           onPress={() => {
             console.log("Botão de registrar pressionado");
             navigation.navigate("Register"); // Navegar para a tela de registro
@@ -135,9 +138,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   inputContainer: {
-    alignItems: "center",
+    justifyContent: "center",
     width: "100%",
+    alignItems: "center",
     gap: 12,
+    /* width: "100%", */
   },
   buttonContainer: {
     marginTop: 16,

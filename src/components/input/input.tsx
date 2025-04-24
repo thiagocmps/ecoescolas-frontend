@@ -24,34 +24,34 @@ const TextInput: React.FC<TextInputProps> = ({
   icon,
   value,
   label,
-  style
+  style,
 }) => {
   return (
-    <View>
+    <View style={[{ width: "100%" }, style]}>
       {label && (
         <Text style={{ marginBottom: 5, fontSize: 16, color: "#333" }}>
           {label}
         </Text>
       )}
-    <View style={[styles.inputContainer, style]}>
-      {icon && (
-        <Ionicons
-          name={icon}
-          size={20}
-          color="#ccc"
-          style={{ marginRight: 10 }}
+      <View style={[styles.inputContainer, style]}>
+        {icon && (
+          <Ionicons
+            name={icon}
+            size={20}
+            color="#ccc"
+            style={{ marginRight: 10 }}
+          />
+        )}
+        <NativeTextInput
+          secureTextEntry={secureTextEntry}
+          placeholder={placeholder}
+          onChangeText={onChangeText}
+          value={value}
+          style={{ flex: 1, height: "100%", width: "100%" }}
+          placeholderTextColor="#ccc" // Cor do texto do placeholder
+          autoCapitalize="none" // Desabilita a capitalização automática
         />
-      )}
-      <NativeTextInput
-        secureTextEntry={secureTextEntry}
-        placeholder={placeholder}
-        onChangeText={onChangeText}
-        value={value}
-        style={{ flex: 1, height: "100%", width: "100%" }}
-        placeholderTextColor="#ccc" // Cor do texto do placeholder
-        autoCapitalize="none" // Desabilita a capitalização automática        
-      />
-    </View>
+      </View>
     </View>
   );
 };

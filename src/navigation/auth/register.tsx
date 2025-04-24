@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, useWindowDimensions } from "react-native";
 import Button from "../../components/button/button";
 import Input from "../../components/input/input";
 import api from "../../services/api";
@@ -13,7 +13,9 @@ export default function RegisterScreen() {
   const [password, setPassword] = useState("");
   const [loading, setlsLoading] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
-
+  const { width } = useWindowDimensions();
+  const isLargeScreen = width >= 1024;
+  
   const navigation = useNavigation();
 
   function handleRegister() {
@@ -66,8 +68,8 @@ export default function RegisterScreen() {
   }
   return (
     <View style={styles.screenContainer}>
-      <View style={{ gap: 16, width: "100%" }}>
-        <View style={styles.container}>
+      <View style={{ gap: 16, width: "100%", justifyContent: "center", alignItems: "center" }}>
+        <View style={[styles.container, { width: isLargeScreen ? "35%" : "100%" }]}>
           <Input
             placeholder="Digite aqui seu nome"
             onChangeText={setFirstName}
@@ -90,7 +92,7 @@ export default function RegisterScreen() {
             label="Email:"
           ></Input>
         </View>
-        <View style={styles.container}>
+        <View style={[styles.container, { width: isLargeScreen ? "35%" : "100%" }]}>
           <Input
             placeholder="Digite aqui sua palavra-passe"
             onChangeText={setPassword}
@@ -99,7 +101,6 @@ export default function RegisterScreen() {
             secureTextEntry={true}
             label="Palavra-passe:"
           ></Input>
-
           <Input
             placeholder="Confirme sua palavra-passe"
             onChangeText={setConfirmPassword}
@@ -112,6 +113,7 @@ export default function RegisterScreen() {
       </View>
 
       <Button
+        style={{ width: isLargeScreen ? "40%" : "100%" }}
         title="Registrar"
         onPress={() => {
           console.log("Registrar pressionado");
@@ -140,7 +142,6 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     justifyContent: "center",
-    paddingHorizontal: 16,
     borderColor: "#ccc",
     borderRadius: 20,
     backgroundColor: "#ffff",
@@ -157,3 +158,4 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
 });
+

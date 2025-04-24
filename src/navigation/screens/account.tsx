@@ -20,7 +20,6 @@ export default function UserScreen() {
   const isLargeScreen = width >= 1024;
 
   return (
-    
     <View style={styles.screenContainer}>
       <StatusBar style={"auto"} />
       {/* ADICIONAR FOTO DE PERFIL AQUI */}
