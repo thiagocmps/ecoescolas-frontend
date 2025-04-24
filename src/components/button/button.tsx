@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   button: {
-    backgroundColor: "tomato", // azul
+    backgroundColor: "#660099", // azul
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 100,

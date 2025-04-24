@@ -1,5 +1,5 @@
 import react, { useState } from "react";
-import { View, Text, StyleSheet, Image, Alert } from "react-native";
+import { View, Text, StyleSheet, Image, Alert, Platform } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import Button from "../../components/button/button";
 import TextInput from "../../components/input/input";
@@ -9,6 +9,8 @@ import type { RootStackParamList } from "../routes";
 import { useNavigation } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
 import * as SecureStore from "expo-secure-store";
+import { StoreToken } from "../../utilities/jwtokenUtilities";
+import { useWindowDimensions } from "react-native";
 
 const logo = require("../../../assets/eco-escolas.png");
 
@@ -16,12 +18,16 @@ type LoginScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
   "Login"
 >;
+const platform = Platform.OS === "web" ? "WebDrawer" : "BottomNavigator";
 
 export default function LoginScreen() {
   const navigation = useNavigation<LoginScreenNavigationProp>();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setlsLoading] = useState(false);
+  const { width } = useWindowDimensions();
+  const isLargeScreen = width >= 1024;
+
   async function loginAuth() {
     console.log("Entrar pressionado");
     setlsLoading(true);
@@ -39,15 +45,25 @@ export default function LoginScreen() {
         });
         setlsLoading(false);
         /* Guardar o Token aqui */
-        await SecureStore.setItemAsync("token", response.data);
-        const token = await SecureStore.getItemAsync("token");
-        console.log("Token armazenado: ", token);
-        console.log("Token:", token);
-        navigation.navigate("BottomNavigator"); // Navegar para a tela principal após o login
+        StoreToken(response.data);
+        navigation.navigate(platform);
       })
       .catch((error) => {
         setlsLoading(false);
         console.error("Erro ao fazer login:", error);
+        if (error.status === 401 || error.status === 403) {
+          Toast.show({
+            type: "error", // 'success' | 'error' | 'info'
+            text1: "❌ Erro ao fazer login",
+            text2: "Verifique suas credenciais e tente novamente.",
+          });
+        } else if (error.status === 500) {
+          Toast.show({
+            type: "error", // 'success' | 'error' | 'info'
+            text1: "❌ Erro no servidor",
+            text2: "Tente novamente mais tarde.",
+          });
+        }
       });
   }
 
@@ -59,6 +75,7 @@ export default function LoginScreen() {
       </View>
       <View style={styles.inputContainer}>
         <TextInput
+          style={{ width: isLargeScreen ? 500 : "100%" }}
           placeholder="Digite o seu email da ESMAD"
           label="Email:"
           value={email}
@@ -67,6 +84,7 @@ export default function LoginScreen() {
         />
         <TextInput
           placeholder="Digite sua palavra-passe"
+          style={{ width: isLargeScreen ? 500 : "100%" }}
           label="Palavra-passe:"
           secureTextEntry={true}
           value={password}
@@ -76,6 +94,7 @@ export default function LoginScreen() {
       </View>
       <View style={styles.buttonContainer}>
         <Button
+          style={{ width: isLargeScreen ? 500 : "100%" }}
           title="Entrar"
           onPress={() => loginAuth()}
           icon="log-in"
@@ -85,6 +104,7 @@ export default function LoginScreen() {
         />
         <Button
           title="Não tem conta? Registre-se"
+          style={{ width: isLargeScreen ? 500 : "100%" }}
           onPress={() => {
             console.log("Botão de registrar pressionado");
             navigation.navigate("Register"); // Navegar para a tela de registro
@@ -107,8 +127,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 16,
     gap: 16,
-    paddingBottom: 32
-    ,
+    paddingBottom: 32,
   },
   imageContainer: {
     width: "100%",
@@ -116,6 +135,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   inputContainer: {
+    alignItems: "center",
     width: "100%",
     gap: 12,
   },
@@ -123,5 +143,6 @@ const styles = StyleSheet.create({
     marginTop: 16,
     width: "100%",
     gap: 8,
+    alignItems: "center",
   },
 });

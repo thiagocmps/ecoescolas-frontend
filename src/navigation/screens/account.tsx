@@ -4,27 +4,34 @@ import { useNavigation, CommonActions } from "@react-navigation/native";
 import * as SecureStore from "expo-secure-store";
 import { StatusBar } from "expo-status-bar";
 import Button from "../../components/button/button";
-import { getDecodedToken } from "../auth/decodedToken";
+import { getDecodedToken } from "../../utilities/jwtokenUtilities";
 import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 import CustomModal from "../../components/modal/modal";
 import { useState } from "react";
+import { RemoveToken } from "../../utilities/jwtokenUtilities";
+import { useWindowDimensions } from "react-native";
+
 
 export default function UserScreen() {
   const navigation = useNavigation();
   const decodedToken = getDecodedToken();
   const [modalVisible, setModalVisible] = useState(false);
+  const { width } = useWindowDimensions();
+  const isLargeScreen = width >= 1024;
 
   return (
+    
     <View style={styles.screenContainer}>
-      <StatusBar style={"dark"} /> 
+      <StatusBar style={"auto"} />
       {/* ADICIONAR FOTO DE PERFIL AQUI */}
       <View style={{ width: "100%", gap: 16, paddingTop: 32 }}>
-        <View style={{ width: "100%", alignItems: "center" }}>
-          <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+        <View style={{ width: "100%", justifyContent: "center", alignItems: "center", paddingBottom: 16 }}>
+          <Text style={{ fontSize: 20, fontWeight: "bold"}}>
             {decodedToken?.data.firstName} {decodedToken?.data.lastName}
           </Text>
         </View>
-        <View style={styles.infoContainer}>
+        <View style={{ width: "100%", justifyContent: "center", alignItems: "center" }}>
+        <View style={{ ...styles.infoContainer, width: isLargeScreen ? "50%" : "100%" }}>
           <Text style={styles.text}>Email: {decodedToken?.data.email}</Text>
           <Text style={styles.text}>
             Perfil:{" "}
@@ -47,8 +54,10 @@ export default function UserScreen() {
             Expira em: {new Date(decodedToken?.exp * 1000).toLocaleDateString()}
           </Text>
         </View>
+        </View>
       </View>
       <Button
+      style={{ width: isLargeScreen ? 300 : "100%" }}
         title="Sair da conta"
         onPress={() => {
           setModalVisible(true);
@@ -67,19 +76,14 @@ export default function UserScreen() {
         onClose={() => setModalVisible(false)}
         onConfirm={() => {
           console.log("Saindo da conta");
-          SecureStore.deleteItemAsync("token")
-            .then(() => {
-              navigation.dispatch(
-                CommonActions.reset({
-                  index: 0,
-                  routes: [{ name: "Login" }],
-                })
-              ); // Navegar para a tela de login após logout
-              console.log("Token removido com sucesso!");
+          RemoveToken();
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{ name: "Login" }],
             })
-            .catch((error) => {
-              console.error("Erro ao remover o token:", error);
-            });
+          ); // Navegar para a tela de login após logout
+          console.log("Token removido com sucesso!");
           setModalVisible(false);
         }}
         onCancel={() => {
@@ -107,17 +111,11 @@ const styles = StyleSheet.create({
   infoContainer: {
     width: "100%",
     gap: 8,
+    backgroundColor: "#fff",
+    borderRadius: 16,
     padding: 16,
-    borderRadius: 10,
-    backgroundColor: "#ffffff",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.41,
-    elevation: 5,
+    borderColor: "#dedede",
+    borderWidth: 1,
   },
   text: {
     fontSize: 16,

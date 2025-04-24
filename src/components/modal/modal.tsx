@@ -7,8 +7,10 @@ import {
   GestureResponderEvent,
 } from "react-native";
 import Modal from "react-native-modal";
+import { TouchableOpacityProps } from "react-native-gesture-handler";
 
 type CustomModalProps = {
+  style?: TouchableOpacityProps["style"];
   visible: boolean;
   onClose: () => void;
   title?: string;
@@ -20,6 +22,7 @@ type CustomModalProps = {
 };
 
 const CustomModal: React.FC<CustomModalProps> = ({
+  style,
   visible,
   onClose,
   title,
@@ -30,10 +33,11 @@ const CustomModal: React.FC<CustomModalProps> = ({
   onCancel,
 }) => {
   return (
-    <Modal isVisible={visible} onBackdropPress={onClose}>
-      <View style={styles.modalContainer}>
+    <Modal isVisible={visible} onBackdropPress={onClose} style={{ justifyContent: "center", alignItems: "center" }}>
+      <View style={[styles.modalContainer, style]}>
         {title && <Text style={styles.title}>{title}</Text>}
-        <View style={styles.content}>{children}</View>
+        <View style={styles.content}>{children}
+        </View>
         <View style={styles.buttonsContainer}>
           <TouchableOpacity
             onPress={onCancel ?? onClose}
@@ -61,8 +65,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 16,
     padding: 20,
-    alignItems: "center",
-    justifyContent: "center",
   },
   title: {
     fontSize: 18,

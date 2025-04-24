@@ -14,6 +14,7 @@ type TextInputProps = {
   onChangeText?: (text: string) => void;
   icon?: React.ComponentProps<typeof Ionicons>["name"];
   label?: string;
+  style?: React.ComponentProps<typeof View>["style"];
 };
 
 const TextInput: React.FC<TextInputProps> = ({
@@ -23,6 +24,7 @@ const TextInput: React.FC<TextInputProps> = ({
   icon,
   value,
   label,
+  style
 }) => {
   return (
     <View>
@@ -31,7 +33,7 @@ const TextInput: React.FC<TextInputProps> = ({
           {label}
         </Text>
       )}
-    <View style={styles.inputContainer}>
+    <View style={[styles.inputContainer, style]}>
       {icon && (
         <Ionicons
           name={icon}
@@ -45,7 +47,7 @@ const TextInput: React.FC<TextInputProps> = ({
         placeholder={placeholder}
         onChangeText={onChangeText}
         value={value}
-        style={{ flex: 1 }}
+        style={{ flex: 1, height: "100%", width: "100%" }}
         placeholderTextColor="#ccc" // Cor do texto do placeholder
         autoCapitalize="none" // Desabilita a capitalização automática        
       />
