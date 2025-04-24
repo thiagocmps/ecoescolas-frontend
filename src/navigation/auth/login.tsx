@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image, Alert, Platform } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import Button from "../../components/button/button";
 import TextInput from "../../components/input/input";
-import api from "../../services/api";
+import api from "../../services/baseApiUrl";
 import { StackNavigationProp } from "@react-navigation/stack";
 import type { RootStackParamList } from "../routes";
 import { useNavigation } from "@react-navigation/native";

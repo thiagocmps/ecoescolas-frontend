@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, useWindowDimensions } from "react-native";
 import Button from "../../components/button/button";
 import Input from "../../components/input/input";
-import api from "../../services/api";
+import api from "../../services/baseApiUrl";
 import Toast from "react-native-toast-message";
 import { useNavigation } from "@react-navigation/native";
 
