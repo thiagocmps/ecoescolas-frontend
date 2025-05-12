@@ -1,5 +1,11 @@
 import react, { useState } from "react";
-import { View, Text, StyleSheet, Image, Alert, Platform } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Image,
+  Platform,
+  KeyboardAvoidingView,
+} from "react-native";
 import { StatusBar } from "expo-status-bar";
 import Button from "../../components/button/button";
 import TextInput from "../../components/input/input";
@@ -8,9 +14,9 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import type { RootStackParamList } from "../routes";
 import { useNavigation } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
-import * as SecureStore from "expo-secure-store";
 import { StoreToken } from "../../utilities/jwtokenUtilities";
 import { useWindowDimensions } from "react-native";
+import { ScrollView, TouchableWithoutFeedback, Keyboard } from "react-native";
 
 const logo = require("../../../assets/eco-escolas.png");
 
@@ -69,16 +75,15 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.screenContainer}>
-      <StatusBar style="dark" backgroundColor="#fff" />
       <View style={styles.imageContainer}>
         <Image source={logo} style={{ width: 200, height: 200 }} />
       </View>
       <View
         style={[
           styles.inputContainer,
-          {  width: isLargeScreen ? "35%" : "100%" },
+          { width: isLargeScreen ? "35%" : "100%" },
         ]}
-       >
+      >
         <TextInput
           placeholder="Digite o seu email da ESMAD"
           label="Email:"
@@ -142,7 +147,6 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     gap: 12,
-    /* width: "100%", */
   },
   buttonContainer: {
     marginTop: 16,

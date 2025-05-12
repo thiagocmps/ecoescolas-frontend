@@ -4,8 +4,10 @@ import {
   Text,
   StyleSheet,
   TextInput as NativeTextInput,
+  KeyboardAvoidingView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { Platform } from "react-native";
 
 type TextInputProps = {
   secureTextEntry?: boolean;
@@ -28,30 +30,30 @@ const TextInput: React.FC<TextInputProps> = ({
 }) => {
   return (
     <View style={[{ width: "100%" }, style]}>
-      {label && (
-        <Text style={{ marginBottom: 5, fontSize: 16, color: "#333" }}>
-          {label}
-        </Text>
-      )}
-      <View style={[styles.inputContainer, style]}>
-        {icon && (
-          <Ionicons
-            name={icon}
-            size={20}
-            color="#ccc"
-            style={{ marginRight: 10 }}
-          />
+        {label && (
+          <Text style={{ marginBottom: 5, fontSize: 16, color: "#333" }}>
+            {label}
+          </Text>
         )}
-        <NativeTextInput
-          secureTextEntry={secureTextEntry}
-          placeholder={placeholder}
-          onChangeText={onChangeText}
-          value={value}
-          style={{ flex: 1, height: "100%", width: "100%" }}
-          placeholderTextColor="#ccc" // Cor do texto do placeholder
-          autoCapitalize="none" // Desabilita a capitalização automática
-        />
-      </View>
+        <View style={[styles.inputContainer, style]}>
+          {icon && (
+            <Ionicons
+              name={icon}
+              size={20}
+              color="#ccc"
+              style={{ marginRight: 10 }}
+            />
+          )}
+          <NativeTextInput
+            secureTextEntry={secureTextEntry}
+            placeholder={placeholder}
+            onChangeText={onChangeText}
+            value={value}
+            style={{ flex: 1, height: "100%", width: "100%" }}
+            placeholderTextColor="#ccc" // Cor do texto do placeholder
+            autoCapitalize="none" // Desabilita a capitalização automática
+          />
+        </View>
     </View>
   );
 };
