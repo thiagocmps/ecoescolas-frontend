@@ -1,11 +1,10 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 
-export default function ReportScreen() {
+export default function UserActivitiesScreen() {
   return (
     <View style={styles.screenContainer}>
-
-      <Text>OCORRÊNCIAS</Text>
+      <Text>MINHAS ATIVIDADES</Text>
     </View>
   );
 }

@@ -52,7 +52,7 @@ const Button: React.FC<ButtonProps> = ({
               style={{ marginRight: 8 }} // Espaçamento entre o ícone e o texto
             />
           )}
-          <Text style={[styles.text, { color: buttonStyle.title.color }]}>
+          <Text numberOfLines={1} style={[styles.text, { color: buttonStyle.title.color }]}>
             {title}
           </Text>
         </View>

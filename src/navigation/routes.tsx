@@ -4,26 +4,41 @@ import "react-native-reanimated";
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import LoginScreen from "./auth/login";
-import { Platform, ActivityIndicator, View } from "react-native";
+import { Platform, ActivityIndicator, View, Text } from "react-native";
 import RegisterScreen from "./auth/register";
-import BottomNavigator from "./bottomNavigator";
+import BottomNavigator from "./bottom-navigator";
 import { Ionicons } from "@expo/vector-icons";
 import accountScreen from "./screens/account";
 import activitiesScreen from "./screens/activities";
 import reportScreen from "./screens/report";
-import UserActivitiesScreen from "./screens/userActivities";
-import { validateToken } from "../utilities/jwtokenUtilities";
-import {
-  DrawerContentScrollView,
-  DrawerItemList,
-} from "@react-navigation/drawer";
+import UserActivitiesScreen from "./screens/user-activities";
+import { validateToken } from "../utilities/jwtoken-utilities";
 import { createDrawerNavigator } from "@react-navigation/drawer"; // Importando o Drawer
+import AddActivityScreen from "./screens/add-activity-page";
+import ActivityInfoScreen from "./screens/activity-info-page";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export type RootStackParamList = {
   Login: undefined;
   Register: undefined;
   BottomNavigator: undefined; // ou pode ter parâmetros
   WebDrawer: undefined;
+  AddActivity: undefined;
+  ActivityInfoScreen: {
+    _id: string;
+    title: string;
+    description: string;
+    date: string;
+    enquadramento: string;
+    objetivos: string;
+    atividade: string;
+    infoSolicitada: string;
+    prazos: string;
+    criterioDeAvaliacao: string;
+    juri: string[];
+    premiosMencoesHonrosas: string;
+    cover: string;
+  };
 };
 
 const platform = Platform.OS === "web" ? "WebDrawer" : "BottomNavigator";
@@ -109,58 +124,84 @@ export default function Routes() {
           ),
         }}
       />
-      {/* <Drawer.Screen name="Minhas Atividades" component={UserActivitiesScreen} /> */}
+      <Drawer.Screen
+        name="Minhas Atividades"
+        component={UserActivitiesScreen}
+        options={{
+          headerTitle: "Minhas Atividades",
+          drawerIcon: ({ focused, size, color }) => (
+            <Ionicons
+              name={focused == true ? "list" : "list-outline"}
+              size={size}
+              color={color}
+            />
+          ),
+        }}
+      />
     </Drawer.Navigator>
   );
 
   return (
-    <Stack.Navigator
-      initialRouteName={isValidated == true ? platform : "Login"}
-      screenOptions={{
-        animation: "slide_from_right",
-      }}
-    >
-      <Stack.Screen
-        name="Login"
-        component={LoginScreen}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="Register"
-        component={RegisterScreen}
-        options={{ headerTitle: "Registro" }}
-      />
-      <Stack.Screen
-        name="Account"
-        component={accountScreen}
-        options={{ headerTitle: "Conta" }}
-      />
-      <Stack.Screen
-        name="Activities"
-        component={activitiesScreen}
-        options={{ headerTitle: "Atividades" }}
-      />
-      <Stack.Screen
-        name="Report"
-        component={reportScreen}
-        options={{ headerTitle: "Relatório" }}
-      />
-      <Stack.Screen
-        name="UserActivities"
-        component={UserActivitiesScreen}
-        options={{ headerTitle: "Atividades do Utilizador" }}
-      />
-      <Stack.Screen
-        name="BottomNavigator"
-        component={BottomNavigator}
-        options={{ headerShown: false }}
-      />
+    <SafeAreaView style={{ flex: 1 }}>
+      <Stack.Navigator
+        initialRouteName={isValidated == true ? platform : "Login"}
+        screenOptions={{
+          animation: "slide_from_right",
+        }}
+      >
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Register"
+          component={RegisterScreen}
+          options={{ headerTitle: "Registro", headerTransparent: false }}
+        />
+        <Stack.Screen
+          name="Account"
+          component={accountScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Activities"
+          component={activitiesScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Report"
+          component={reportScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="UserActivities"
+          component={UserActivitiesScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="BottomNavigator"
+          component={BottomNavigator}
+          options={{ headerShown: false }}
+        />
 
-      <Stack.Screen
-        name="WebDrawer"
-        component={WebDrawer}
-        options={{ headerShown: false }}
-      />
-    </Stack.Navigator>
+        <Stack.Screen
+          name="WebDrawer"
+          component={WebDrawer}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ActivityInfoScreen"
+          component={ActivityInfoScreen}
+          options={{ headerTitle: "", headerTransparent: true }}
+        />
+
+        <Stack.Screen
+          name="AddActivity"
+          component={AddActivityScreen}
+          options={{ headerTitle: "", headerTransparent: true }}
+        />
+      </Stack.Navigator>
+    </SafeAreaView>
   );
 }

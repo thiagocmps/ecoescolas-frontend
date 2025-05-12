@@ -1,33 +1,20 @@
-import react, { useState } from "react";
-import {
-  View,
-  StyleSheet,
-  Image,
-  Platform,
-  KeyboardAvoidingView,
-} from "react-native";
-import { StatusBar } from "expo-status-bar";
+import { useState } from "react";
+import { View, StyleSheet, Image, Platform } from "react-native";
 import Button from "../../components/button/button";
 import TextInput from "../../components/input/input";
-import api from "../../services/baseApiUrl";
+import api from "../../services/base-api-url";
 import { StackNavigationProp } from "@react-navigation/stack";
 import type { RootStackParamList } from "../routes";
 import { useNavigation } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
-import { StoreToken } from "../../utilities/jwtokenUtilities";
+import { StoreToken } from "../../utilities/jwtoken-utilities";
 import { useWindowDimensions } from "react-native";
-import { ScrollView, TouchableWithoutFeedback, Keyboard } from "react-native";
-
 const logo = require("../../../assets/eco-escolas.png");
 
-type LoginScreenNavigationProp = StackNavigationProp<
-  RootStackParamList,
-  "Login"
->;
 const platform = Platform.OS === "web" ? "WebDrawer" : "BottomNavigator";
 
 export default function LoginScreen() {
-  const navigation = useNavigation<LoginScreenNavigationProp>();
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setlsLoading] = useState(false);
@@ -52,7 +39,10 @@ export default function LoginScreen() {
         setlsLoading(false);
         /* Guardar o Token aqui */
         StoreToken(response.data);
-        navigation.navigate(platform);
+        navigation.reset({
+          index: 0,
+          routes: [{ name: platform }],
+        });
       })
       .catch((error) => {
         setlsLoading(false);
@@ -129,7 +119,8 @@ export default function LoginScreen() {
 
 const styles = StyleSheet.create({
   screenContainer: {
-    flex: 1,
+    width: "100%",
+    height: "100%",
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#fff",

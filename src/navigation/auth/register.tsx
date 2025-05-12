@@ -2,11 +2,10 @@ import React, { useState } from "react";
 import { View, StyleSheet, useWindowDimensions } from "react-native";
 import Button from "../../components/button/button";
 import Input from "../../components/input/input";
-import api from "../../services/baseApiUrl";
+import api from "../../services/base-api-url";
 import Toast from "react-native-toast-message";
 import { useNavigation } from "@react-navigation/native";
 import { ScrollView } from "react-native";
-import { Platform } from "react-native";
 
 export default function RegisterScreen() {
   const [email, setEmail] = useState("");
@@ -72,7 +71,7 @@ export default function RegisterScreen() {
     <View style={styles.screenContainer}>
       <ScrollView
         style={styles.scrollContainer}
-        contentContainerStyle={styles.scrollableScreenContainer}
+        contentContainerStyle={[styles.scrollableScreenContainer, { marginBottom: isLargeScreen ? 100 : 0, gap: isLargeScreen ? 20 : 0}]}
       >
         <View
           style={{
@@ -135,7 +134,7 @@ export default function RegisterScreen() {
           </View>
         </View>
         <Button
-          style={{ width: isLargeScreen ? "40%" : "100%" }}
+          style={{ width: isLargeScreen ? "35%" : "100%" }}
           title="Registrar"
           onPress={() => {
             console.log("Registrar pressionado");
@@ -174,8 +173,7 @@ const styles = StyleSheet.create({
     height: "100%",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#fff",
-    marginBottom: 20  
+    backgroundColor: "#fff", 
   },
   contentContainer: {
     width: "100%",

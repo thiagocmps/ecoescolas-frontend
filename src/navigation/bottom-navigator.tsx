@@ -1,22 +1,21 @@
 // App.js
-import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import AccountScreen from "./screens/account";
 import ActivitiesScreen from "./screens/activities";
-import UserActivitiesScreen from "./screens/userActivities";
+import UserActivitiesScreen from "./screens/user-activities";
 import ReportScreen from "./screens/report";
+import { StatusBar } from "expo-status-bar";
+import { transparent } from "react-native-paper/lib/typescript/styles/themes/v2/colors";
 
 const Tab = createBottomTabNavigator();
-
 
 function BottomNavigator() {
   return (
     <View style={{ flex: 1 }}>
-      <StatusBar style="light" />
-
+      {<StatusBar style="auto"/>}
       <Tab.Navigator
         initialRouteName="Atividades"
         screenOptions={({ route }) => ({
@@ -25,13 +24,8 @@ function BottomNavigator() {
             paddingTop: 8,
             height: 70,
           },
-          headerShown:
-            route.name !== "Conta" /* EM DUVIDA SE EU TIRO O HEADER OU DEIXO */,
+          headerShown: false/* EM DUVIDA SE EU TIRO O HEADER OU DEIXO */,
           /*  headerTitle: route.name == "Atividades" ? , */
-          headerStyle: {
-            backgroundColor: "#006838", // cor de fundo
-          },
-          headerTintColor: "#fff", // cor dos ícones/texto
           headerTitleAlign: "center",
 
           tabBarIcon: ({ focused, color, size }) => {
