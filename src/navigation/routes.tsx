@@ -29,15 +29,17 @@ export type RootStackParamList = {
     title: string;
     description: string;
     date: string;
-    enquadramento: string;
-    objetivos: string;
-    atividade: string;
-    infoSolicitada: string;
-    prazos: string;
-    criterioDeAvaliacao: string;
-    juri: string[];
-    premiosMencoesHonrosas: string;
-    cover: string;
+    info: {
+      cover: string;
+      enquadramento: string;
+      objetivos: string;
+      atividades: string;
+      info_solicitada: string;
+      prazos: string;
+      criterio_de_avaliacao: string;
+      juri: string[];
+      premios_mencoes_honrosas: string;
+    };
   };
 };
 
@@ -56,7 +58,6 @@ export default function Routes() {
     checkToken();
   }, []);
 
-  console.log("isValidated:", isValidated);
   if (isValidated === null) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -74,6 +75,7 @@ export default function Routes() {
           width: "20%",
           backgroundColor: "#fff",
         },
+        overlayColor: "transparent",
         headerShown: false,
         drawerActiveTintColor: "tomato",
         drawerLabelStyle: {

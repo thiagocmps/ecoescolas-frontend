@@ -71,7 +71,13 @@ export default function RegisterScreen() {
     <View style={styles.screenContainer}>
       <ScrollView
         style={styles.scrollContainer}
-        contentContainerStyle={[styles.scrollableScreenContainer, { marginBottom: isLargeScreen ? 100 : 0, gap: isLargeScreen ? 20 : 0}]}
+        contentContainerStyle={[
+          styles.scrollableScreenContainer,
+          {
+            marginBottom: isLargeScreen ? 100 : 0,
+            gap: isLargeScreen ? 20 : 0,
+          },
+        ]}
       >
         <View
           style={{
@@ -88,6 +94,7 @@ export default function RegisterScreen() {
             ]}
           >
             <Input
+              type="input"
               placeholder="Digite aqui seu nome"
               onChangeText={setFirstName}
               icon="person-outline"
@@ -95,6 +102,7 @@ export default function RegisterScreen() {
               label="Primeiro nome:"
             ></Input>
             <Input
+              type="input"
               placeholder="Digite aqui seu sobrenome"
               onChangeText={setLastName}
               value={lastName}
@@ -102,6 +110,7 @@ export default function RegisterScreen() {
               label="Sobrenome:"
             ></Input>
             <Input
+              type="input"
               placeholder="Digite aqui seu email da ESMAD"
               onChangeText={setEmail}
               value={email}
@@ -116,6 +125,7 @@ export default function RegisterScreen() {
             ]}
           >
             <Input
+              type="input"
               placeholder="Digite aqui sua palavra-passe"
               onChangeText={setPassword}
               value={password}
@@ -124,6 +134,7 @@ export default function RegisterScreen() {
               label="Palavra-passe:"
             ></Input>
             <Input
+              type="input"
               placeholder="Confirme sua palavra-passe"
               onChangeText={setConfirmPassword}
               value={confirmPassword}
@@ -159,7 +170,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     backgroundColor: "#fff",
-    
   },
   scrollContainer: {
     width: "100%",
@@ -173,7 +183,7 @@ const styles = StyleSheet.create({
     height: "100%",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#fff", 
+    backgroundColor: "#fff",
   },
   contentContainer: {
     width: "100%",

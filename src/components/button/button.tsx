@@ -12,13 +12,13 @@ import { View } from "react-native-animatable";
 import { variants } from "./variants";
 
 type ButtonProps = {
-  title: string;
+  title?: string;
   icon?: React.ComponentProps<typeof Ionicons>["name"];
   onPress: (event: GestureResponderEvent) => void;
   disabled?: boolean;
   isLoading?: boolean;
-  variant?: "primary" | "outlined"; 
-  style?: TouchableOpacityProps["style"]; 
+  variant?: "primary" | "outlined";
+  style?: TouchableOpacityProps["style"];
 };
 
 const Button: React.FC<ButtonProps> = ({
@@ -30,15 +30,14 @@ const Button: React.FC<ButtonProps> = ({
   variant = "primary",
   style,
 }) => {
-  const buttonVariant = variants[variant]; // Obtém o estilo do botão com base na variante selecionada
+  const buttonVariant = variants[variant];
   const buttonStyle = disabled ? buttonVariant.disabled : buttonVariant.enabled;
   return (
     <TouchableOpacity
-      style={[styles.button, { ...buttonStyle.button }, style]} // Aplica o estilo do botão e a cor de fundo quando desabilitado
+      style={[styles.button, { ...buttonStyle.button }, style]}
       onPress={onPress}
-      disabled={isLoading || disabled} // Desabilita o botão se isLoading ou disabled
-      activeOpacity={0.8} // Opacidade ao pressionar
-      // Adiciona a propriedade variant
+      disabled={isLoading || disabled}
+      activeOpacity={0.8}
     >
       {isLoading ? (
         <ActivityIndicator size="small" color={buttonStyle.icon.color} />
@@ -49,12 +48,17 @@ const Button: React.FC<ButtonProps> = ({
               name={icon}
               size={20}
               color={buttonStyle.icon.color} // Cor do ícone
-              style={{ marginRight: 8 }} // Espaçamento entre o ícone e o texto
+              style={title ? { marginRight: 8 } : undefined } // Espaçamento entre o ícone e o texto
             />
           )}
-          <Text numberOfLines={1} style={[styles.text, { color: buttonStyle.title.color }]}>
-            {title}
-          </Text>
+          {title === "" || title === null || title === undefined ? null : (
+            <Text
+              numberOfLines={1}
+              style={[styles.text, { color: buttonStyle.title.color }]}
+            >
+              {title}
+            </Text>
+          )}
         </View>
       )}
     </TouchableOpacity>

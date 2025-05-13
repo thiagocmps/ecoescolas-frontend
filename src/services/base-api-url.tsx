@@ -1,6 +1,5 @@
 import axios from "axios";
 import { API_BASE_URL } from "../../config";
-import { GetToken } from "../utilities/jwtoken-utilities";
 
 const isLocalhost = true; // Defina como true se estiver em localhost
 const baseUrl = !isLocalhost
@@ -14,17 +13,6 @@ const api = axios.create({
   },
 });
 
-api.interceptors.request.use(
-  async (config) => {
-    const token = await GetToken();
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+
 
 export default api;

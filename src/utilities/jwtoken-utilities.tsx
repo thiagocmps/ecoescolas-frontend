@@ -1,11 +1,24 @@
 import * as SecureStore from "expo-secure-store";
 import { jwtDecode } from "jwt-decode";
-import React from "react";
 import { Platform } from "react-native";
 import { useState } from "react";
 import { useEffect } from "react";
-import { Activity, Registration } from "../utilities/types";
+import { Registration } from "../utilities/types";
 import api from "../services/base-api-url";
+
+api.interceptors.request.use(
+  async (config) => {
+    const token = await GetToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 
 type DecodedToken = {
   data: {

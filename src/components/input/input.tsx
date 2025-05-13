@@ -8,10 +8,13 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Platform } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 
 type TextInputProps = {
   secureTextEntry?: boolean;
+  type: "input" | "textarea";
   placeholder?: string;
+  onSubmitEditing?: () => void;
   value?: string;
   onChangeText?: (text: string) => void;
   icon?: React.ComponentProps<typeof Ionicons>["name"];
@@ -26,16 +29,34 @@ const TextInput: React.FC<TextInputProps> = ({
   icon,
   value,
   label,
+  onSubmitEditing,
   style,
+  type,
 }) => {
   return (
-    <View style={[{ width: "100%" }, style]}>
-        {label && (
-          <Text style={{ marginBottom: 5, fontSize: 16, color: "#333" }}>
-            {label}
-          </Text>
-        )}
-        <View style={[styles.inputContainer, style]}>
+    <ScrollView style={[{ width: "100%" }, style]}>
+      {label && (
+        <Text style={{ marginBottom: 5, fontSize: 16, color: "#333" }}>
+          {label}
+        </Text>
+      )}
+      <View
+        style={[
+          styles.inputContainer,
+          style,
+          {
+            height:
+              type === "textarea" ? (Platform.OS == "web" ? 90 : 150) : 50,
+            alignItems: type === "textarea" ? "flex-start" : "center",
+          },
+        ]}
+      >
+        <View
+          style={{
+            height: type === "textarea" ? "100%" : undefined,
+            paddingTop: type === "textarea" ? 10 : 0,
+          }}
+        >
           {icon && (
             <Ionicons
               name={icon}
@@ -44,17 +65,34 @@ const TextInput: React.FC<TextInputProps> = ({
               style={{ marginRight: 10 }}
             />
           )}
+        </View>
+        {type === "textarea" ? (
+          <NativeTextInput
+            secureTextEntry={secureTextEntry}
+            placeholder={placeholder}
+            onChangeText={onChangeText}
+            value={value}
+            style={{ flex: 1, height: "100%", width: "100%", paddingTop: 10 }}
+            placeholderTextColor="#ccc"
+            onSubmitEditing={onSubmitEditing}
+            multiline={true}
+            numberOfLines={4}
+            autoCapitalize="none"
+            textAlignVertical="top"
+          />
+        ) : (
           <NativeTextInput
             secureTextEntry={secureTextEntry}
             placeholder={placeholder}
             onChangeText={onChangeText}
             value={value}
             style={{ flex: 1, height: "100%", width: "100%" }}
-            placeholderTextColor="#ccc" // Cor do texto do placeholder
-            autoCapitalize="none" // Desabilita a capitalização automática
+            placeholderTextColor="#ccc"
+            autoCapitalize="none"
           />
-        </View>
-    </View>
+        )}
+      </View>
+    </ScrollView>
   );
 };
 

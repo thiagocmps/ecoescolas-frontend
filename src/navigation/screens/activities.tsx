@@ -3,89 +3,80 @@ import { View, Text, StyleSheet } from "react-native";
 import { getActivities } from "../../services/api-requests";
 import { TouchableOpacity } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
-import { Activity } from "../../utilities/types";
-import { useEffect, useState } from "react";
 import Button from "../../components/button/button";
 import { useGetDecodedToken } from "../../utilities/jwtoken-utilities";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../routes";
 import { Platform } from "react-native";
+import { Image } from "react-native";
+import { useFetchOnFocus } from "../../utilities/fetch-on-focus";
+import { Activity } from "../../utilities/types";
+import { ActivityIndicator } from "react-native";
 
 export default function ActivitiesScreen() {
   const userInfo = useGetDecodedToken();
-  const [isLoading, setIsLoading] = useState(true);
-  const [activities, setActivities] = useState<Activity[]>([]);
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const data = await getActivities();
-        setActivities(data);
-      } catch (error) {
-        console.error("Erro ao buscar atividades:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    })();
-  }, []);
+  const {
+    data: activities,
+    loading: isLoading,
+    error,
+  } = useFetchOnFocus<Activity[]>(getActivities);
 
-  const renderItem = ({ item }: { item: Activity }) => (
-    <TouchableOpacity
-      style={[styles.item, { width: Platform.OS == "web" ? 350 : "100%" }]}
-      onPress={() => {
-        navigation.navigate("ActivityInfoScreen", {
-          _id: item._id,
-          title: item.title,
-          description: item.description,
-          objetivos: item.info.objetivos,
-          atividade: item.info.atividade,
-          infoSolicitada: item.info.info_solicitada,
-          prazos: item.info.prazos,
-          criterioDeAvaliacao: item.info.criterio_de_avaliacao,
-          juri: item.info.juri,
-          premiosMencoesHonrosas: item.info.premios_mencoes_honrosas,
-          cover: item.info.cover,
-          date: String(item.date),
-          enquadramento: item.info.enquadramento,
-      })}
-    }>
-      <View
-        style={{
-          backgroundColor: "#d7d7d7",
-          height: 120,
-          padding: 10,
-          width: "100%",
-          justifyContent: "center",
-          alignItems: "center",
+  const renderItem = ({ item }: { item: Activity }) => {
+    const base64Icon = `data:image/png;base64,${item.info.cover}`;
+    /* console.log("Item: ", item.info); */
+    return (
+      <TouchableOpacity
+        style={[styles.item, { width: Platform.OS == "web" ? 350 : "100%" }]}
+        onPress={() => {
+          navigation.navigate("ActivityInfoScreen", {
+            _id: item._id,
+            title: item.title,
+            description: item.description,
+            date: String(item.date),
+            info: item.info,
+          });
         }}
       >
-        <Text style={{ fontSize: 16, color: "#636363" }}>
-          {item.info.cover == "req.body.cover" || null || undefined
-            ? "a imagem vai ficar aqui confia"
-            : item.info.cover}
-        </Text>
-      </View>
-      <View style={{ padding: 10 }}>
-        <Text numberOfLines={1} style={{ fontSize: 16 }}>
-          {" "}
-          {item.title}
-        </Text>
-        <Text numberOfLines={2} style={{ paddingTop: 6 }}>
-          {" "}
-          {item.description}
-        </Text>
-      </View>
-    </TouchableOpacity>
-  );
+        <View
+          style={{
+            backgroundColor: "#d7d7d7",
+            height: 120,
+            width: "100%",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Image
+            style={{ width: "100%", height: "100%" }}
+            resizeMode="cover"
+            source={{ uri: base64Icon }}
+          />
+        </View>
+        <View style={{ padding: 10 }}>
+          <Text numberOfLines={1} style={{ fontSize: 16 }}>
+            {" "}
+            {item.title}
+          </Text>
+          <Text numberOfLines={2} style={{ paddingTop: 6 }}>
+            {" "}
+            {item.description}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <View style={styles.screenContainer}>
       {isLoading ? (
-        <Text style={{ marginTop: 20 }}>Carregando atividades...</Text>
-      ) : activities.length === 0 ? (
+        <View style={{ flex: 1, justifyContent: "center" }}>
+          <ActivityIndicator size="large" />
+        </View>
+      ) : !activities || activities.length === 0 ? (
         <Text style={{ marginTop: 20 }}>Não há atividades disponíveis</Text>
       ) : (
         <FlatList

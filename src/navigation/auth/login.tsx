@@ -75,6 +75,7 @@ export default function LoginScreen() {
         ]}
       >
         <TextInput
+          type="input"
           placeholder="Digite o seu email da ESMAD"
           label="Email:"
           value={email}
@@ -82,6 +83,7 @@ export default function LoginScreen() {
           icon="mail-outline"
         />
         <TextInput
+          type="input"
           placeholder="Digite sua palavra-passe"
           label="Palavra-passe:"
           secureTextEntry={true}

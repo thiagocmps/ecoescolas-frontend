@@ -8,7 +8,7 @@ export interface Activity {
   info: {
     objetivos: string;
     enquadramento: string;
-    atividade: string;
+    atividades: string;
     info_solicitada: string;
     prazos: string;
     criterio_de_avaliacao: string;
