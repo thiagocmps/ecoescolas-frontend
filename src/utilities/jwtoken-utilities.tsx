@@ -19,7 +19,6 @@ api.interceptors.request.use(
   }
 );
 
-
 type DecodedToken = {
   data: {
     id: string;
@@ -27,7 +26,7 @@ type DecodedToken = {
     firstName: string;
     lastName: string;
     role: string;
-    createdAt: string; // use string, pois vem como ISO string do JWT
+    createdAt: string;
   };
   exp: number;
   iat: number;
@@ -55,12 +54,14 @@ const processToken = async (): Promise<DecodedToken | null> => {
 };
 
 export function useGetDecodedToken() {
-  const [decodedToken, setDecodedToken] = useState<DecodedToken | null>(null);
+  const [decodedToken, setDecodedToken] = useState<DecodedToken>();
 
   useEffect(() => {
     const fetchToken = async () => {
       const token = await processToken();
-      setDecodedToken(token);
+      if (token) {
+        setDecodedToken(token);
+      }
     };
     fetchToken();
   }, []);
@@ -94,7 +95,7 @@ export const validateToken = async (): Promise<boolean> => {
 export const StoreToken = async (token: string) => {
   try {
     if (Platform.OS === "web") {
-      localStorage.setItem("token", token);
+      await localStorage.setItem("token", token);
     } else if (Platform.OS === "android" || Platform.OS === "ios") {
       await SecureStore.setItemAsync("token", token);
     }
@@ -104,9 +105,8 @@ export const StoreToken = async (token: string) => {
 };
 
 export async function RemoveToken() {
-  console.log("Removendo o token...");
   if (Platform.OS === "web") {
-    localStorage.removeItem("token");
+    await localStorage.removeItem("token");
     console.log("Token removido do localStorage");
   } else if (Platform.OS === "android" || Platform.OS === "ios") {
     await SecureStore.deleteItemAsync("token");
@@ -134,12 +134,10 @@ export async function GetToken() {
   }
 }
 
-
 export const processingIsValidatedToActivity = async (
   activityId: string,
   userId: string
 ): Promise<boolean | null> => {
-
   try {
     if (!userId) {
       console.warn("⚠️ userId está vazio ou indefinido.");
@@ -178,3 +176,6 @@ export const useValidatedToActivity = (activityId: string) => {
 
   return isRegistered;
 };
+
+
+

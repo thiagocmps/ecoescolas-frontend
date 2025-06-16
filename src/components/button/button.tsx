@@ -6,6 +6,7 @@ import {
   GestureResponderEvent,
   ActivityIndicator,
   TouchableOpacityProps,
+  OpaqueColorValue,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { View } from "react-native-animatable";
@@ -19,6 +20,7 @@ type ButtonProps = {
   isLoading?: boolean;
   variant?: "primary" | "outlined";
   style?: TouchableOpacityProps["style"];
+  contentColor?: OpaqueColorValue | string;
 };
 
 const Button: React.FC<ButtonProps> = ({
@@ -29,12 +31,13 @@ const Button: React.FC<ButtonProps> = ({
   isLoading,
   variant = "primary",
   style,
+  contentColor,
 }) => {
   const buttonVariant = variants[variant];
   const buttonStyle = disabled ? buttonVariant.disabled : buttonVariant.enabled;
   return (
     <TouchableOpacity
-      style={[styles.button, { ...buttonStyle.button }, style]}
+      style={[localStyles.button, { ...buttonStyle.button }, style]}
       onPress={onPress}
       disabled={isLoading || disabled}
       activeOpacity={0.8}
@@ -42,19 +45,22 @@ const Button: React.FC<ButtonProps> = ({
       {isLoading ? (
         <ActivityIndicator size="small" color={buttonStyle.icon.color} />
       ) : (
-        <View style={styles.contentAlignment}>
+        <View style={localStyles.contentAlignment}>
           {icon && (
             <Ionicons
               name={icon}
               size={20}
-              color={buttonStyle.icon.color} // Cor do ícone
-              style={title ? { marginRight: 8 } : undefined } // Espaçamento entre o ícone e o texto
+              color={contentColor ?? buttonStyle.icon.color} // Cor do ícone
+              style={title ? { marginRight: 8 } : undefined} // Espaçamento entre o ícone e o texto
             />
           )}
           {title === "" || title === null || title === undefined ? null : (
             <Text
               numberOfLines={1}
-              style={[styles.text, { color: buttonStyle.title.color }]}
+              style={[
+                localStyles.text,
+                { color: contentColor ?? buttonStyle.title.color },
+              ]}
             >
               {title}
             </Text>
@@ -65,7 +71,7 @@ const Button: React.FC<ButtonProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   contentAlignment: {
     flexDirection: "row",
     alignItems: "center",

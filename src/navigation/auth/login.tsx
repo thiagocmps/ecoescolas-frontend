@@ -9,9 +9,23 @@ import { useNavigation } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
 import { StoreToken } from "../../utilities/jwtoken-utilities";
 import { useWindowDimensions } from "react-native";
+import { useGetDecodedToken } from "../../utilities/jwtoken-utilities";
+import { jwtDecode } from "jwt-decode";
 const logo = require("../../../assets/eco-escolas.png");
-
 const platform = Platform.OS === "web" ? "WebDrawer" : "BottomNavigator";
+
+type DecodedToken = {
+  data: {
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    role: string;
+    createdAt: string;
+  };
+  exp: number;
+  iat: number;
+};
 
 export default function LoginScreen() {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
@@ -32,17 +46,42 @@ export default function LoginScreen() {
       .then(async (response) => {
         console.log("Login bem-sucedido:", response.data);
         Toast.show({
-          type: "success", // 'success' | 'error' | 'info'
+          type: "success",
           text1: "Login feito com sucesso!",
           text2: "Bem-vindo de volta 👋",
         });
         setlsLoading(false);
-        /* Guardar o Token aqui */
-        StoreToken(response.data);
-        navigation.reset({
-          index: 0,
-          routes: [{ name: platform }],
-        });
+        /* StoreToken(response.data); */
+        const decoded = await jwtDecode<DecodedToken>(response.data);
+        
+        const role = decoded.data.role;
+        if (role === "worker" && Platform.OS === "web") {
+          await StoreToken(response.data);
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "WebDrawerWorker" }],
+          });
+        } else if (role === "worker" && Platform.OS !== "web") {
+          await StoreToken(response.data);
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "BottomNavigator" }],
+          });
+          setlsLoading(false);
+          return;
+        } else if (Platform.OS === "web") {
+          await StoreToken(response.data);
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "WebDrawer" }],
+          });
+        } else {
+          StoreToken(response.data);
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "BottomNavigator" }],
+          });
+        }
       })
       .catch((error) => {
         setlsLoading(false);
@@ -64,13 +103,13 @@ export default function LoginScreen() {
   }
 
   return (
-    <View style={styles.screenContainer}>
-      <View style={styles.imageContainer}>
+    <View style={localStyles.screenContainer}>
+      <View style={localStyles.imageContainer}>
         <Image source={logo} style={{ width: 200, height: 200 }} />
       </View>
       <View
         style={[
-          styles.inputContainer,
+          localStyles.inputContainer,
           { width: isLargeScreen ? "35%" : "100%" },
         ]}
       >
@@ -92,7 +131,7 @@ export default function LoginScreen() {
           icon="lock-closed-outline"
         />
       </View>
-      <View style={styles.buttonContainer}>
+      <View style={localStyles.buttonContainer}>
         <Button
           style={{ width: isLargeScreen ? "35%" : "100%" }}
           title="Entrar"
@@ -119,7 +158,7 @@ export default function LoginScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   screenContainer: {
     width: "100%",
     height: "100%",

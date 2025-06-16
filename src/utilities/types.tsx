@@ -22,5 +22,42 @@ export interface Registration {
   _id: string;
   activityId: string;
   userId: string;
-  status: string; 
+  status: string;
+}
+
+export type RegistrationWithActivity = {
+  _id: string;
+  activityId: string;
+  userId: string;
+  status: string;
+  activity: Activity;
+};
+
+export interface User {
+  _id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+  createdAt: string;
+  numMecanografico: string;
+  registrationData: {
+    status: string;
+    createdAt: string;
+  };
+}
+
+export interface Report {
+  _id: string;
+  userId: string;
+  workerId?: string;
+  status: string;
+  category: string;
+  local: {
+    bloco: string;
+    sala: string;
+  };
+  description: string;
+  image: string;
+  createdAt: Date;
 }

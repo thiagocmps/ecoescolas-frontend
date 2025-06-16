@@ -68,11 +68,11 @@ export default function RegisterScreen() {
       });
   }
   return (
-    <View style={styles.screenContainer}>
+    <View style={localStyles.screenContainer}>
       <ScrollView
-        style={styles.scrollContainer}
+        style={localStyles.scrollContainer}
         contentContainerStyle={[
-          styles.scrollableScreenContainer,
+          localStyles.scrollableScreenContainer,
           {
             marginBottom: isLargeScreen ? 100 : 0,
             gap: isLargeScreen ? 20 : 0,
@@ -89,7 +89,7 @@ export default function RegisterScreen() {
         >
           <View
             style={[
-              styles.contentContainer,
+              localStyles.contentContainer,
               { width: isLargeScreen ? "35%" : "100%" },
             ]}
           >
@@ -120,7 +120,7 @@ export default function RegisterScreen() {
           </View>
           <View
             style={[
-              styles.contentContainer,
+              localStyles.contentContainer,
               { width: isLargeScreen ? "35%" : "100%" },
             ]}
           >
@@ -162,7 +162,7 @@ export default function RegisterScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   screenContainer: {
     width: "100%",
     height: "100%",

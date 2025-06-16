@@ -34,23 +34,23 @@ const CustomModal: React.FC<CustomModalProps> = ({
 }) => {
   return (
     <Modal isVisible={visible} onBackdropPress={onClose} style={{ justifyContent: "center", alignItems: "center" }}>
-      <View style={[styles.modalContainer, style]}>
-        {title && <Text style={styles.title}>{title}</Text>}
-        <View style={styles.content}>{children}
+      <View style={[localStyles.modalContainer, style]}>
+        {title && <Text style={localStyles.title}>{title}</Text>}
+        <View style={localStyles.content}>{children}
         </View>
-        <View style={styles.buttonsContainer}>
+        <View style={localStyles.buttonsContainer}>
           <TouchableOpacity
             onPress={onCancel ?? onClose}
-            style={[styles.button, styles.cancelButton]}
+            style={[localStyles.button, localStyles.cancelButton]}
           >
-            <Text style={styles.buttonText}>{cancelText}</Text>
+            <Text style={localStyles.buttonText}>{cancelText}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             onPress={onConfirm}
-            style={[styles.button, styles.confirmButton]}
+            style={[localStyles.button, localStyles.confirmButton]}
           >
-            <Text style={styles.buttonText}>{confirmText}</Text>
+            <Text style={localStyles.buttonText}>{confirmText}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -60,7 +60,7 @@ const CustomModal: React.FC<CustomModalProps> = ({
 
 export default CustomModal;
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   modalContainer: {
     backgroundColor: "#fff",
     borderRadius: 16,

@@ -14,6 +14,7 @@ type Props = {
   label: string;
   placeholder?: string;
   icon?: React.ComponentProps<typeof Ionicons>["name"];
+  subLabel?: string;
   onSubmitEditing?: () => void;
   items: string[];
   onAdd: (item: string) => void;
@@ -24,6 +25,7 @@ export default function MultiInputList({
   label,
   placeholder,
   icon,
+  subLabel,
   items,
   onAdd,
   onRemove,
@@ -38,9 +40,12 @@ export default function MultiInputList({
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.label}>{label}</Text>
-      <View style={styles.inputRow}>
+    <View style={localStyles.container}>
+      <View>
+        <Text style={localStyles.label}>{label}</Text>
+        {subLabel && <Text style={{ fontSize: 12, color: "#666", fontStyle: "italic" }}>{subLabel}</Text>}
+      </View>
+      <View style={localStyles.inputRow}>
         <Input
           value={input}
           type="input"
@@ -52,7 +57,7 @@ export default function MultiInputList({
         <Button
           icon="add-outline"
           onPress={adicionar}
-          style={styles.addButton}
+          style={localStyles.addButton}
         />
       </View>
 
@@ -60,17 +65,17 @@ export default function MultiInputList({
         <TouchableOpacity
           key={index}
           onPress={() => onRemove(index)}
-          style={styles.item}
+          style={localStyles.item}
         >
-          <Text style={styles.itemText}>{item}</Text>
-          <Text style={styles.removeText}>✕</Text>
+          <Text style={localStyles.itemText}>{item}</Text>
+          <Text style={localStyles.removeText}>✕</Text>
         </TouchableOpacity>
       ))}
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   container: {
     width: "100%",
     gap: 8,

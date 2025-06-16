@@ -7,7 +7,7 @@ import CustomModal from "../../components/modal/modal";
 import { useState } from "react";
 import { RemoveToken } from "../../utilities/jwtoken-utilities";
 import { useWindowDimensions } from "react-native";
-
+import Tag from "../../components/tag/tag";
 export default function UserScreen() {
   const navigation = useNavigation();
   const decodedToken = useGetDecodedToken();
@@ -16,7 +16,7 @@ export default function UserScreen() {
   const isLargeScreen = width >= 1024;
 
   return (
-    <View style={styles.screenContainer}>
+    <View style={localStyles.screenContainer}>
       {/* ADICIONAR FOTO DE PERFIL AQUI */}
       <View style={{ width: "100%", gap: 16, paddingTop: 32 }}>
         <View
@@ -40,12 +40,12 @@ export default function UserScreen() {
         >
           <View
             style={{
-              ...styles.infoContainer,
+              ...localStyles.infoContainer,
               width: isLargeScreen ? "50%" : "100%",
             }}
           >
-            <Text style={styles.text}>Email: {decodedToken?.data.email}</Text>
-            <Text style={styles.text}>
+            <Text style={localStyles.text}>Email: {decodedToken?.data.email}</Text>
+            <Text style={localStyles.text}>
               Perfil:{" "}
               {decodedToken?.data.role == "student"
                 ? "Estudante"
@@ -54,22 +54,23 @@ export default function UserScreen() {
                 : "Segurança"}
             </Text>
             {decodedToken?.data.role === "student" && (
-              <Text style={styles.text}>
+              <Text style={localStyles.text}>
                 Nº mecanográfico: {decodedToken?.data?.email.slice(0, 8)}
               </Text>
             )}
-            <Text style={styles.text}>
+            <Text style={localStyles.text}>
               Criado em:{" "}
               {decodedToken?.data.createdAt
                 ? new Date(decodedToken.data.createdAt).toLocaleDateString()
                 : "Data desconhecida"}
             </Text>
-            <Text style={styles.text}>
+            <Text style={localStyles.text}>
               Expira em:{" "}
               {decodedToken?.exp
                 ? new Date(decodedToken.exp * 1000).toLocaleDateString()
                 : "Data desconhecida"}
             </Text>
+            
           </View>
         </View>
       </View>
@@ -114,7 +115,7 @@ export default function UserScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   screenContainer: {
     flex: 1,
     justifyContent: "space-between",

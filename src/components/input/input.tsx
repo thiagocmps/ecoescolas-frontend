@@ -15,6 +15,7 @@ type TextInputProps = {
   type: "input" | "textarea";
   placeholder?: string;
   onSubmitEditing?: () => void;
+  subLabel?: string;
   value?: string;
   onChangeText?: (text: string) => void;
   icon?: React.ComponentProps<typeof Ionicons>["name"];
@@ -29,6 +30,7 @@ const TextInput: React.FC<TextInputProps> = ({
   icon,
   value,
   label,
+  subLabel,
   onSubmitEditing,
   style,
   type,
@@ -40,9 +42,14 @@ const TextInput: React.FC<TextInputProps> = ({
           {label}
         </Text>
       )}
+      {subLabel && (
+        <Text style={{ marginBottom: 5, fontSize: 12, color: "#666", fontStyle: "italic" }}>
+          {subLabel}
+        </Text>
+      )}
       <View
         style={[
-          styles.inputContainer,
+          localStyles.inputContainer,
           style,
           {
             height:
@@ -96,7 +103,7 @@ const TextInput: React.FC<TextInputProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
