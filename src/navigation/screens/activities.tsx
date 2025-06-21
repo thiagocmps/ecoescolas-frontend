@@ -16,9 +16,14 @@ import { Activity } from "../../utilities/types";
 import Button from "../../components/button/button";
 import ListCard from "../../components/list-card/list-card";
 import { globalStyles } from "../../utilities/styles";
+import { useCallback } from "react";
 
 export default function ActivitiesScreen() {
   const userInfo = useGetDecodedToken();
+  const fetchUsers = useCallback(() => {
+    return getActivities();
+  }, []);
+
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
@@ -27,7 +32,9 @@ export default function ActivitiesScreen() {
     loading: isLoading,
     error,
     refetch,
-  } = useFetchOnFocus<Activity[]>(getActivities);
+  } = useFetchOnFocus<Activity[]>(fetchUsers, {
+    delay: 200,
+  });
 
   return (
     <View style={localStyles.screenContainer}>
@@ -47,14 +54,18 @@ export default function ActivitiesScreen() {
           creatorTagVisible={true}
           data={activities}
           listHeaderComponent={() => (
-            <Text style={[globalStyles.title, { paddingVertical: 40 }]}>
-              Olá,{" "}
-              {userInfo?.data.role === "professor"
-                ? `professor(a) ${userInfo?.data.firstName} ${userInfo?.data.lastName}`
-                : userInfo?.data.role === "seguranca"
-                ? `segurança ${userInfo?.data.firstName} ${userInfo?.data.lastName}`
-                : `aluno ${userInfo?.data.firstName} ${userInfo?.data.lastName}`}
-            </Text>
+            <>
+              <View style={{ width: "100%", paddingHorizontal: 16, paddingVertical: 20, marginTop: 32, backgroundColor: "#ffffff", elevation: 10, borderRadius: 20}}>
+        
+                <Text style={[globalStyles.title, /* { paddingVertical: 40 } */]}>
+                  Olá, {userInfo?.data.firstName} {userInfo?.data.lastName}!
+                </Text>
+                 <Text style={[globalStyles.regularText, { /* paddingBottom: 16 */ }]}>
+                Aqui estão as atividades disponíveis para você participar.
+              </Text>
+              </View>
+             
+            </>
           )}
           style={{ width: "100%" }}
           onPress={(item) => {

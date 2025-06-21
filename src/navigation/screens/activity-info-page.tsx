@@ -291,7 +291,7 @@ export default function ActivityInfoScreen() {
               cancelText="Cancelar"
               onClose={() => setModalVisibleSubs(false)}
               onConfirm={() => {
-                registerToActivity(_id, userId);
+                registerToActivity(_id, userId, creatorId);
                 Toast.show({
                   type: "success",
                   text1: "Inscrição realizada com sucesso! 😊",

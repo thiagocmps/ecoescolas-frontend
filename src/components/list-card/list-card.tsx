@@ -23,7 +23,12 @@ import Tag from "../tag/tag";
 import { optionsCategory } from "../../navigation/screens/add-report-page";
 
 type Props = {
-  variant: "activity" | "registration" | "members" | "report";
+  variant:
+    | "activity"
+    | "registration"
+    | "members"
+    | "report"
+    | "Account_Validation";
   activityCreatorId?: string;
   /* filterByStatus?: "pending" | "validated" | "finished"; */
   data:
@@ -44,7 +49,6 @@ type Props = {
 export default function ListCard({
   variant,
   data,
-  /*  filterByStatus, */
   onPress,
   onPressClose: onPressClose,
   listHeaderComponent,
@@ -63,7 +67,7 @@ export default function ListCard({
     const option = optionsCategory.find((opt) => opt.value === value);
     return option ? option.label : "Categoria desconhecida";
   };
-  
+
   const renderItem = ({ item }: { item: any }) => {
     const creatorId = item?.creatorId;
     const isCreator = userId === creatorId ? true : false;
@@ -268,6 +272,69 @@ export default function ListCard({
       );
     }
 
+    if (variant === "Account_Validation") {
+      const account = item as User;
+      /* if (account.role === "admin") {
+        return undefined;
+      } */
+      return (
+        <TouchableOpacity
+          style={[
+            style,
+            localStyles.item,
+            {
+              width: Platform.OS === "web" ? cardWidth : "100%",
+              height: 100,
+              paddingHorizontal: 16,
+              justifyContent: "flex-start",
+              paddingVertical: 16,
+            },
+          ]}
+          onPress={() => onPress(account)}
+        >
+          <View style={{ flexDirection: "column" }}>
+            <View
+              style={{
+                flexDirection: "row",
+                gap: 8,
+                justifyContent: "space-between",
+              }}
+            >
+              <View style={{ flexDirection: "row", gap: 8 }}>
+                <Text>
+                  {account.firstName} {account.lastName} -{" "}
+                  {account.role === "student"
+                    ? "Estudante"
+                    : account.role === "professor"
+                    ? "Professor"
+                    : account.role === "worker"
+                    ? "Segurança"
+                    : "Administrador"}
+                </Text>
+              </View>
+              {account.status === "pending" ? (
+                <Tag
+                  text="Pendente"
+                  icon="ellipse"
+                  color="#f0f0f0"
+                  iconColor="#717083"
+                  textColor="#717083"
+                />
+              ) : (
+                <Tag
+                  text="Validado"
+                  icon="ellipse"
+                  color="#8be0bc"
+                  iconColor="#01673d"
+                  textColor="#01673d"
+                />
+              )}
+            </View>
+          </View>
+        </TouchableOpacity>
+      );
+    }
+
     if (variant === "report") {
       const report = item as Report;
       return (
@@ -321,45 +388,88 @@ export default function ListCard({
               style={{
                 flexDirection: "column",
                 gap: 8,
+                width: "100%",
               }}
             >
-              <Text>{getCategoryLabel(report.category)}</Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Text style={{ width: "90%" }}>
+                  {getCategoryLabel(report.category)}
+                </Text>
+                <TouchableOpacity
+                  style={{
+                    padding: 4,
+                    backgroundColor: "tomato",
+
+                    borderRadius: 10,
+                    /* position: "absolute",
+                top: 8,
+                right: 16, */
+                  }}
+                  onPress={() => onPressClose(report)}
+                >
+                  <Ionicons name="trash" size={20} color={"white"} />
+                </TouchableOpacity>
+              </View>
               <Text
                 style={{ fontSize: 16, fontWeight: "bold" }}
                 numberOfLines={1}
               >
                 {report.local.bloco} - {report.local.sala}
               </Text>
-              {report.status === "pending" ? (
-                <Tag
-                  text="Pendente"
-                  icon="ellipse"
-                  color="#f0f0f0"
-                  iconColor="#717083"
-                  textColor="#717083"
-                  style={{ width: 100 }}
-                />
-              ) : (
-                <Tag
-                  text="Resolvido"
-                  icon="ellipse"
-                  color="#8be0bc"
-                  iconColor="#01673d"
-                  textColor="#01673d"
-                  style={{ width: 100 }}
-                />
-              )}
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
+                {currentUser?.data.role === "worker" ? (
+                  <View style={{ flexDirection: "row", gap: 8 }}>
+                    <Text style={{}}>
+                      {report.userId.firstName} {report.userId.lastName}
+                    </Text>
+                    {report.userId.role === "professor" ? (
+                      <View
+                        style={{
+                          paddingHorizontal: 6,
+
+                          borderRadius: 100,
+                          backgroundColor: "tomato",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Ionicons name="school" color={"white"}></Ionicons>
+                      </View>
+                    ) : undefined}
+                  </View>
+                ) : undefined}
+                {report.status === "pending" ? (
+                  <Tag
+                    text="Pendente"
+                    icon="ellipse"
+                    color="#f0f0f0"
+                    iconColor="#717083"
+                    textColor="#717083"
+                    style={{ width: 100 }}
+                  />
+                ) : (
+                  <Tag
+                    text="Resolvido"
+                    icon="ellipse"
+                    color="#8be0bc"
+                    iconColor="#01673d"
+                    textColor="#01673d"
+                    style={{ width: 100 }}
+                  />
+                )}
+              </View>
             </View>
-            <TouchableOpacity
-              style={{
-                padding: 4,
-                backgroundColor: "tomato",
-                borderRadius: 10,
-              }}
-              onPress={() => onPressClose(report)}
-            >
-              <Ionicons name="trash" size={20} color={"white"} />
-            </TouchableOpacity>
           </View>
         </TouchableOpacity>
       );

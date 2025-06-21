@@ -65,42 +65,45 @@ export default function ReportInfoScreen() {
       <ScrollView
         style={{ paddingHorizontal: Platform.OS === "web" ? "20%" : 16 }}
       >
-        <TouchableOpacity
-          style={{
-            position: "absolute",
-            elevation: 10,
-            zIndex: 10,
-            top: 24,
-            right: 16,
-            padding: 4,
-            backgroundColor: "tomato",
-            height: 40,
-            width: 40,
-            justifyContent: "center",
-            alignItems: "center",
-            borderRadius: 10,
-          }}
-          onPress={() => {
-            deleteReport(_id);
-            {
-              Platform.OS === "web"
-                ? navigation.dispatch(
-                    CommonActions.reset({
-                      index: 0,
-                      routes: [{ name: "WebDrawer" }],
-                    })
-                  )
-                : navigation.dispatch(
-                    CommonActions.reset({
-                      index: 0,
-                      routes: [{ name: "BottomNavigator" }],
-                    })
-                  );
-            }
-          }}
-        >
-          <Ionicons name="trash" size={20} color={"white"} />
-        </TouchableOpacity>
+        {status !== "solved" ? (
+          <TouchableOpacity
+            style={{
+              position: "absolute",
+              elevation: 10,
+              zIndex: 10,
+              top: 24,
+              right: 16,
+              padding: 4,
+              backgroundColor: "tomato",
+              height: 40,
+              width: 40,
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: 10,
+            }}
+            onPress={() => {
+              deleteReport(_id);
+              {
+                Platform.OS === "web"
+                  ? navigation.dispatch(
+                      CommonActions.reset({
+                        index: 0,
+                        routes: [{ name: "WebDrawer" }],
+                      })
+                    )
+                  : navigation.dispatch(
+                      CommonActions.reset({
+                        index: 0,
+                        routes: [{ name: "BottomNavigator" }],
+                      })
+                    );
+              }
+            }}
+          >
+            <Ionicons name="trash" size={20} color={"white"} />
+          </TouchableOpacity>
+        ) : undefined}
+
         <View
           style={{
             flex: 1,
@@ -196,7 +199,7 @@ export default function ReportInfoScreen() {
                   title={"Finalizado"}
                   disabled={true}
                   variant="outlined"
-                  icon="ellipsis-horizontal-outline"
+                  icon="checkmark-outline"
                   style={{ width: 140 }}
                 />
               )}
@@ -215,7 +218,7 @@ export default function ReportInfoScreen() {
                   <View>
                     <ImageCarousel
                       images={image}
-                      isEditable={false} /*  containeStyle={{width: "100%"}} */
+                      isEditable={false} /*containeStyle={{width: "100%"}} */
                     />
                   </View>
                 </View>
@@ -230,9 +233,10 @@ export default function ReportInfoScreen() {
         onClose={() => setIsModalVisible(false)}
         title="Confirmar resolução"
         onConfirm={() => {
-          updateReportStatus(_id, "solved");
-          setIsModalVisible(false);
-          navigation.goBack();
+          updateReportStatus(_id, "solved").then(() => {
+            setIsModalVisible(false);
+            navigation.goBack();
+          });
         }}
       >
         <Text style={{ textAlign: "center", marginVertical: 16 }}>

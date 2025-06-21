@@ -9,9 +9,10 @@ import { useNavigation } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
 import { StoreToken } from "../../utilities/jwtoken-utilities";
 import { useWindowDimensions } from "react-native";
-import { useGetDecodedToken } from "../../utilities/jwtoken-utilities";
 import { jwtDecode } from "jwt-decode";
+import CustomModal from "../../components/modal/modal";
 const logo = require("../../../assets/eco-escolas.png");
+
 const platform = Platform.OS === "web" ? "WebDrawer" : "BottomNavigator";
 
 type DecodedToken = {
@@ -22,6 +23,7 @@ type DecodedToken = {
     lastName: string;
     role: string;
     createdAt: string;
+    status: string;
   };
   exp: number;
   iat: number;
@@ -29,54 +31,85 @@ type DecodedToken = {
 
 export default function LoginScreen() {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+  const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setlsLoading] = useState(false);
+  const [ModalVisible, setModalVisible] = useState(false);
   const { width } = useWindowDimensions();
   const isLargeScreen = width >= 1024;
-
+  /*   const [isLoading, setIsLoading] = useState(false);
+   */
   async function loginAuth() {
     console.log("Entrar pressionado");
-    setlsLoading(true);
+    setIsLoading(true);
     api
       .post("/users/login", {
         email: email,
         password: password,
       })
       .then(async (response) => {
-        console.log("Login bem-sucedido:", response.data);
+        const decoded = await jwtDecode<DecodedToken>(response.data);
+
+        const role = decoded.data.role;
+        const status = decoded.data.status;
+        console.warn(status);
+        console.warn(role);
+
+        if (status === "pending" && role !== "admin" && role !== "student") {
+          <CustomModal
+            title="Conta não validada"
+            visible={ModalVisible}
+            onClose={() => {
+              navigation.navigate("Login");
+              setModalVisible(false);
+            }}
+            onConfirm={() => {
+              navigation.navigate("Login");
+            }}
+          ></CustomModal>;
+          setIsLoading(false);
+          return Toast.show({
+            type: "error",
+            text1: "Conta não validada",
+            text2:
+              "Por favor, aguarde a validação da sua conta pelo administrador",
+          });
+        }
+
         Toast.show({
           type: "success",
           text1: "Login feito com sucesso!",
           text2: "Bem-vindo de volta 👋",
         });
-        setlsLoading(false);
-        /* StoreToken(response.data); */
-        const decoded = await jwtDecode<DecodedToken>(response.data);
-        
-        const role = decoded.data.role;
+
+        await StoreToken(response.data);
+
         if (role === "worker" && Platform.OS === "web") {
-          await StoreToken(response.data);
           navigation.reset({
             index: 0,
             routes: [{ name: "WebDrawerWorker" }],
           });
         } else if (role === "worker" && Platform.OS !== "web") {
-          await StoreToken(response.data);
           navigation.reset({
             index: 0,
             routes: [{ name: "BottomNavigator" }],
           });
-          setlsLoading(false);
-          return;
+        } else if (role === "admin" && Platform.OS !== "web") {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "BottomNavigator" }],
+          });
+        } else if (role === "admin" && Platform.OS === "web") {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "WebDrawerAdmin" }],
+          });
         } else if (Platform.OS === "web") {
-          await StoreToken(response.data);
           navigation.reset({
             index: 0,
             routes: [{ name: "WebDrawer" }],
           });
         } else {
-          StoreToken(response.data);
           navigation.reset({
             index: 0,
             routes: [{ name: "BottomNavigator" }],
@@ -84,7 +117,7 @@ export default function LoginScreen() {
         }
       })
       .catch((error) => {
-        setlsLoading(false);
+        setIsLoading(false);
         console.error("Erro ao fazer login:", error);
         if (error.status === 401 || error.status === 403) {
           Toast.show({
@@ -137,7 +170,7 @@ export default function LoginScreen() {
           title="Entrar"
           onPress={() => loginAuth()}
           icon="log-in"
-          isLoading={loading}
+          isLoading={isLoading}
           disabled={false}
           variant="primary"
         />

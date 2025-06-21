@@ -3,7 +3,10 @@
     "name": "ecoescolas-frontend",
     "slug": "ecoescolas-frontend",
     "extra": {
-      "API_BASE_URL": "ashamed-elfrida-thiagocmps-a0126839.koyeb.app"
+      "API_BASE_URL": "ashamed-elfrida-thiagocmps-a0126839.koyeb.app",
+      "eas": {
+        "projectId": "fa5ceb4c-19a7-4d3a-9a1d-f46684e9456b"
+      }
     },
     "version": "1.0.0",
     "orientation": "portrait",
@@ -21,12 +24,13 @@
     "android": {
       "package": "com.ecoescolas.frontend",
       "adaptiveIcon": {
-      "foregroundImage": "./assets/adaptive-icon.png",
-      "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
       }
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "owner": "thiaaago"
   }
 }

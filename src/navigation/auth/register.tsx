@@ -42,9 +42,9 @@ export default function RegisterScreen() {
       .then(async (response) => {
         console.log("Registro bem-sucedido:", response.data);
         Toast.show({
-          type: "success", // 'success' | 'error' | 'info'
+          type: "success",
           text1: "Registro feito com sucesso!",
-          text2: "Por favor, faça login para continuar 😊",
+          text2: "Por favor, aguarde a validação da sua conta antes de fazer login.",
         });
         setlsLoading(false);
         navigation.goBack(); // Navegar para a tela de login após o registro

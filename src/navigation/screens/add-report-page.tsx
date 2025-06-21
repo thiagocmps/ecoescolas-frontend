@@ -226,9 +226,7 @@ export default function AddReportScreen() {
               inputDescription,
               selectedImages
             );
-            {
-              navigation.goBack();
-            }
+            navigation.goBack();
           }}
           title="Criar ocorrência"
           icon="add"

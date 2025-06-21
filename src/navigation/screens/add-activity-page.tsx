@@ -248,7 +248,7 @@ export default function AddActivityScreen() {
                 value={premios}
                 onChangeText={setPremios}
               />
-              <Button
+              {/* <Button
                 icon="images-outline"
                 title="Adicionar imagem"
                 contentColor={"#ccc"}
@@ -261,7 +261,7 @@ export default function AddActivityScreen() {
                   borderColor: "#ccc",
                 }}
                 onPress={() => {}}
-              />
+              /> */}
               {imageUri && (
                 <View style={localStyles.preview}>
                   <Image source={{ uri: imageUri }} style={localStyles.image} />

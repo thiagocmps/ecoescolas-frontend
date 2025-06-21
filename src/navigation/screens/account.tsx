@@ -51,7 +51,7 @@ export default function UserScreen() {
                 ? "Estudante"
                 : decodedToken?.data.role == "professor"
                 ? "Professor"
-                : "Segurança"}
+                : decodedToken?.data.role == "worker" ? "Segurança" : "Administrador"}
             </Text>
             {decodedToken?.data.role === "student" && (
               <Text style={localStyles.text}>

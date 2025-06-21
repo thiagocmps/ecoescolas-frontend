@@ -40,6 +40,7 @@ export interface User {
   lastName: string;
   role: string;
   createdAt: string;
+  status: string; 
   numMecanografico: string;
   registrationData: {
     status: string;
@@ -49,7 +50,12 @@ export interface User {
 
 export interface Report {
   _id: string;
-  userId: string;
+  userId: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    role: string;
+  };
   workerId?: string;
   status: string;
   category: string;

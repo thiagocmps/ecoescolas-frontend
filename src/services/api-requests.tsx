@@ -4,15 +4,18 @@ import { useGetDecodedToken } from "../utilities/jwtoken-utilities";
 import { useState, useEffect } from "react";
 import Toast from "react-native-toast-message";
 import { View, Text } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 export const registerToActivity = async (
   activityId: String,
-  userId: String | undefined
+  userId: String | undefined,
+  creatorId: string | undefined
 ) => {
   try {
     await api.post("/activities/registrations/add", {
       activityId: activityId,
       userId: userId,
+      creatorId: creatorId,
       status: "pending",
     });
   } catch (error) {
@@ -240,6 +243,122 @@ export async function deleteActivity(activityId: string) {
   }
 }
 
+
+
+export async function getReportsByUser(): Promise<any[]> {
+  try {
+    const response = await api.get(`/reports/`);
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao buscar ocorrências do utilizador:", error);
+    Toast.show({
+      type: "error",
+      text1: "Erro ao buscar ocorrências, tente novamente",
+    });
+    return [];
+  }
+}
+
+export async function deleteReport(reportId: string): Promise<void> {
+  try {
+    await api.delete(`/reports/delete/${reportId}`);
+    Toast.show({
+      type: "success",
+      text1: "Ocorrência deletada com sucesso!",
+    });
+  } catch (error) {
+    console.error("Erro ao deletar ocorrência:", error);
+    Toast.show({
+      type: "error",
+      text1: "Erro ao deletar ocorrência, tente novamente",
+    });
+  }
+}
+
+export async function createReport(
+  userId?: string,
+  category?: string,
+  bloco?: string,
+  sala?: string,
+  description?: string,
+  image?: String[]
+) {
+  try {
+    const response = await api.post(`/reports/create`, {
+      userId: userId,
+      category: category,
+      local: {
+        bloco: bloco,
+        sala: sala,
+      },
+      description: description,
+      image: image,
+    });
+    if (response.status === 200 || response.status === 201) {
+      Toast.show({
+        type: "success",
+        text1: "Ocorrência criada com sucesso!",
+      });
+    }
+  } catch (error) {
+    Toast.show({
+      type: "error",
+      text1: "Erro ao tentar criar ocorrênicia",
+    });
+  }
+}
+
+export async function getAllReports(): Promise<any[]> {
+  try {
+    const response = await api.get(`/reports/all`);
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao buscar ocorrências do utilizador:", error);
+    Toast.show({
+      type: "error",
+      text1: "Erro ao buscar ocorrências, tente novamente",
+    });
+    return [];
+  }
+}
+
+export async function updateReportStatus(reportId: string, status: string) {
+  try {
+    const response = await api.patch(`/reports/update/${reportId}`, {
+      status: status,
+    });
+    if (response.status === 200 || response.status === 201) {
+      Toast.show({
+        type: "success",
+        text1: "Status atualizado com sucesso!",
+      });
+      return true;
+    }
+  } catch (error) {
+    console.error("Erro ao atualizar status da ocorrência: ", error);
+    Toast.show({
+      type: "error",
+      text1: "Erro ao atualizar status da ocorrência, tente novamente",
+    });
+  }
+}
+
+export async function getAllUsers(): Promise<User[]> {
+  try {
+    console.warn("Chegou aqui");
+    const response = await api.get(`/users/`);
+    console.warn(response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao buscar utilizadores:", error);
+    Toast.show({
+      type: "error",
+      text1: "Erro ao buscar utilizadores, tente novamente",
+    });
+    return [];
+  }
+}
+
 export async function patchActivity(
   activityId: string,
   titulo: string,
@@ -284,96 +403,38 @@ export async function patchActivity(
   }
 }
 
-export async function getReportsByUser(): Promise<any[]> {
+export async function patchAccount(userId: string, status: string, role: string) {
   try {
-    const response = await api.get(`/reports/`);
-    return response.data;
-  } catch (error) {
-    console.error("Erro ao buscar relatórios do utilizador:", error);
-    Toast.show({
-      type: "error",
-      text1: "Erro ao buscar relatórios, tente novamente",
-    });
-    return [];
-  }
-}
-
-export async function deleteReport(reportId: string): Promise<void> {
-  try {
-    await api.delete(`/reports/delete/${reportId}`);
+    if (role === "") {
+      const response = await api.patch(`/users/patch/${userId}`, {
+        status: status,
+      });
+    } else {
+      const response = await api.patch(`/users/patch/${userId}`, {
+        status: status,
+        role: role,
+      });
+    }
     Toast.show({
       type: "success",
-      text1: "Ocorrência deletada com sucesso!",
+      text1: "Conta validada com sucesso!",
     });
-  } catch (error) {
-    console.error("Erro ao deletar relatório:", error);
-    Toast.show({
-      type: "error",
-      text1: "Erro ao deletar relatório, tente novamente",
-    });
-  }
+  } catch (error) {}
 }
 
-export async function createReport(
-  userId?: string,
-  category?: string,
-  bloco?: string,
-  sala?: string,
-  description?: string,
-  image?: String[]
-) {
+export async function deleteAccount(userId: string) {
   try {
-    await api.post(`/reports/create`, {
-      userId: userId,
-      category: category,
-      local: {
-        bloco: bloco,
-        sala: sala,
-      },
-      description: description,
-      image: image,
-    });
+    const response = await api.delete(`/users/delete/${userId}`);
     Toast.show({
       type: "success",
-      text1: "Ocorrência criada com sucesso!"
-    })
-  } catch (error) {
-    Toast.show({
-      type: "error",
-      text1: "Erro ao tentar criar ocorrênicia"
-    })
-  }
-}
-
-export async function getAllReports(): Promise<any[]> {
-  try {
-    const response = await api.get(`/reports/all`);
-    return response.data;
-  } catch (error) {
-    console.error("Erro ao buscar ocorrências do utilizador:", error);
-    Toast.show({
-      type: "error",
-      text1: "Erro ao buscar ocorrências, tente novamente",
-    });
-    return [];
-  }
-}
-
-export async function updateReportStatus(reportId: string, status: string) {
-  try {
-    const response = await api.patch(`/reports/update/${reportId}`, {
-      status: status,
-    });
-    Toast.show({
-      type: "success",
-      text1: "Status atualizado com sucesso!",
+      text1: "Conta deletada com sucesso!",
     });
     return response;
   } catch (error) {
-    console.error("Erro ao atualizar status da ocorrência: ", error);
+    console.error("Erro ao deletar conta:", error);
     Toast.show({
       type: "error",
-      text1: "Erro ao atualizar status da ocorrência, tente novamente",
+      text1: "Erro ao deletar conta, tente novamente",
     });
   }
 }

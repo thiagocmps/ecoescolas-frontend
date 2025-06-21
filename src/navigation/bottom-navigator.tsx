@@ -10,6 +10,7 @@ import ReportScreen from "./screens/report";
 import { StatusBar } from "expo-status-bar";
 import { useGetDecodedToken } from "../utilities/jwtoken-utilities";
 import MyActivitiesScreen from "./screens/my-activities";
+import ValidateAccountScreen from "./screens/validate-accounts";
 
 const Tab = createBottomTabNavigator();
 
@@ -43,6 +44,8 @@ function BottomNavigator() {
               iconName = focused ? "document-text" : "document-text-outline";
             } else if (route.name === "Minhas atividades") {
               iconName = focused ? "bookmark" : "bookmark-outline";
+            } else if (route.name === "Validar contas") {
+              iconName = focused ? "person-add" : "person-add-outline";
             }
 
             return <Ionicons name={iconName} size={size} color={color} />;
@@ -51,7 +54,16 @@ function BottomNavigator() {
           tabBarInactiveTintColor: "gray",
         })}
       >
-        {role == "professor" ? (
+        {role === "admin" ? (
+          <>
+            <Tab.Screen
+              name="Validar contas"
+              component={ValidateAccountScreen}
+            />
+          </>
+        ) : undefined}
+
+        {role === "professor" ? (
           <Tab.Screen
             name="Minhas atividades"
             component={MyActivitiesScreen}
@@ -74,14 +86,15 @@ function BottomNavigator() {
             }}
           />
         ) : null}
-        {role !== "worker" ? (
+        {role !== "worker" && role !== "admin" && (
           <>
             <Tab.Screen name="Atividades" component={ActivitiesScreen} />
             <Tab.Screen name="Inscrições" component={UserRegistrationsScreen} />
           </>
-        ) : undefined}
-
-        <Tab.Screen name="Ocorrências" component={ReportScreen} />
+        )}
+        {role !== "admin" && (
+          <Tab.Screen name="Ocorrências" component={ReportScreen} />
+        )}
         <Tab.Screen name="Conta" component={AccountScreen} />
       </Tab.Navigator>
     </View>

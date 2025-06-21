@@ -16,17 +16,20 @@ import { createDrawerNavigator } from "@react-navigation/drawer"; // Importando 
 import AddActivityScreen from "./screens/add-activity-page";
 import ActivityInfoScreen from "./screens/activity-info-page";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Activity } from "../utilities/types";
 import MyActivitiesScreen from "./screens/my-activities";
 import { useGetDecodedToken } from "../utilities/jwtoken-utilities";
 import AddReportScreen from "./screens/add-report-page";
 import ReportInfoScreen from "./screens/report-info-page";
+import ValidateAccountScreen from "./screens/validate-accounts";
+import ValidateAccountInfoPage from "./screens/validate-accounts-info-page";
+
 export type RootStackParamList = {
   Login: undefined;
   Register: undefined;
   BottomNavigator: undefined; // ou pode ter parâmetros
   WebDrawer: undefined;
   WebDrawerWorker: undefined;
+  WebDrawerAdmin: undefined;
   AddActivity:
     | undefined
     | {
@@ -61,6 +64,20 @@ export type RootStackParamList = {
     image: string;
     createdAt: Date;
   };
+  ValidateAccountScreen: undefined;
+  ValidateAccountInfoPage: {
+    _id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    role: string;
+    createdAt: string;
+    numMecanografico: string;
+    registrationData: {
+      status: string;
+      createdAt: string;
+    };
+  };
   CreatedActivities: undefined;
   AddReport?: undefined;
   ActivityInfoScreen: {
@@ -94,6 +111,8 @@ export default function Routes() {
     Platform.OS === "web"
       ? role === "worker"
         ? "WebDrawerWorker"
+        : role === "admin"
+        ? "WebDrawerAdmin"
         : "WebDrawer"
       : "BottomNavigator";
 
@@ -259,6 +278,55 @@ export default function Routes() {
     </Drawer.Navigator>
   );
 
+  const WebDrawerAdmin = () => (
+    <Drawer.Navigator
+      initialRouteName={"Validar contas"}
+      screenOptions={{
+        drawerType: "permanent",
+        drawerStyle: {
+          width: "20%",
+          backgroundColor: "#fff",
+        },
+        overlayColor: "transparent",
+        headerShown: false,
+        drawerActiveTintColor: "tomato",
+        drawerLabelStyle: {
+          fontSize: 15,
+          fontWeight: "bold",
+        },
+      }}
+    >
+      <Drawer.Screen
+        name="Validar contas"
+        component={ValidateAccountScreen}
+        options={{
+          headerTitle: "Conta",
+          drawerIcon: ({ focused, size, color }) => (
+            <Ionicons
+              name={focused == true ? "person-add" : "person-add-outline"}
+              size={size}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="Conta"
+        component={accountScreen}
+        options={{
+          headerTitle: "Conta",
+          drawerIcon: ({ focused, size, color }) => (
+            <Ionicons
+              name={focused == true ? "person" : "person-outline"}
+              size={size}
+              color={color}
+            />
+          ),
+        }}
+      />
+    </Drawer.Navigator>
+  );
+
   return (
     <SafeAreaView
       style={{
@@ -321,6 +389,11 @@ export default function Routes() {
           options={{ headerShown: false }}
         />
         <Stack.Screen
+          name="WebDrawerAdmin"
+          component={WebDrawerAdmin}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
           name="CreatedActivities"
           component={MyActivitiesScreen}
           options={{ headerShown: false }}
@@ -341,6 +414,23 @@ export default function Routes() {
             headerTransparent: true,
           }}
         />
+        <Stack.Screen
+          name="ValidateAccountScreen"
+          component={ValidateAccountScreen}
+          options={{
+            headerTitle: "",
+            headerTransparent: true,
+          }}
+        />
+        <Stack.Screen
+          name="ValidateAccountInfoPage"
+          component={ValidateAccountInfoPage}
+          options={{
+            headerTitle: "",
+            headerTransparent: true,
+          }}
+        />
+        
         <Stack.Screen
           name="AddReport"
           component={AddReportScreen}
