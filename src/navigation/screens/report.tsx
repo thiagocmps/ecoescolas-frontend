@@ -12,6 +12,9 @@ import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../routes";
 import { ActivityIndicator } from "react-native";
 import { useGetDecodedToken } from "../../utilities/jwtoken-utilities";
+import { globalStyles } from "../../utilities/styles";
+import Ionicons from "@expo/vector-icons/Ionicons";
+
 export default function ReportScreen() {
   const userInfo = useGetDecodedToken();
   const navigation =
@@ -50,6 +53,50 @@ export default function ReportScreen() {
         <ListCard
           variant="report"
           data={reports ?? []}
+          listHeaderComponent={() => (
+            <View
+              style={{
+                width: "100%",
+                paddingHorizontal: 16,
+                paddingVertical: 20,
+                marginTop: 32,
+                marginBottom: 16,
+                backgroundColor: "#ffffff",
+                /* elevation: 5, */
+                borderRadius: 20,
+                borderColor: "tomato",
+                borderWidth: 2,
+              }}
+            >
+              <View
+                style={{
+                  padding: 8,
+                  backgroundColor: "tomato",
+                  borderRadius: 100,
+                  position: "absolute",
+                  top: 16,
+                  right: 16,
+                }}
+              >
+                <Ionicons name="bulb" size={16} color="white" />
+              </View>
+              <View style={{ width: "80%" }}>
+                <Text
+                  style={[
+                    globalStyles.regularText,
+                    {
+                      /* paddingBottom: 16 */
+                      color: "tomato",
+                      fontWeight: "500",
+                    },
+                  ]}
+                >
+                  Suas inscrições em atividades ficarão aqui,{" "}
+                  {userInfo?.data.firstName}{" "}
+                </Text>
+              </View>
+            </View>
+          )}
           onPress={(item) => {
             const report = item as Report;
             console.warn(report);

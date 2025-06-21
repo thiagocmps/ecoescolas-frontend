@@ -12,10 +12,13 @@ import ListCard from "../../components/list-card/list-card";
 import { useNavigation } from "@react-navigation/native";
 import type { StackNavigationProp } from "@react-navigation/stack";
 import type { RootStackParamList } from "../routes"; // Update the path as needed
+import { globalStyles } from "../../utilities/styles";
+import { useGetDecodedToken } from "../../utilities/jwtoken-utilities";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function UserRegistrationsScreen() {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
-
+  const userInfo = useGetDecodedToken();
   const {
     data: registrations,
     loading: isLoading,
@@ -57,6 +60,49 @@ export default function UserRegistrationsScreen() {
           variant="registration"
           onPressAdd={() => {}}
           onPressClose={() => {}}
+          listHeaderComponent={() => (
+            <View
+              style={{
+                width: "100%",
+                paddingHorizontal: 16,
+                paddingVertical: 20,
+                marginTop: 32,
+                marginBottom: 16,
+                backgroundColor: "#ffffff",
+                /* elevation: 5, */
+                borderRadius: 20,
+                borderColor: "tomato",
+                borderWidth: 2,
+              }}
+            >
+              <View
+                style={{
+                  padding: 8,
+                  backgroundColor: "tomato",
+                  borderRadius: 100,
+                  position: "absolute",
+                  top: 16,
+                  right: 16,
+                }}
+              >
+                <Ionicons name="bulb" size={16} color="white" />
+              </View>
+              <View style={{ width: "80%" }}>
+                <Text
+                  style={[
+                    globalStyles.regularText,
+                    {
+                      /* paddingBottom: 16 */
+                      color: "tomato",
+                      fontWeight: "500",
+                    },
+                  ]}
+                >
+                  Suas inscrições em atividades ficarão aqui
+                </Text>
+              </View>
+            </View>
+          )}
           data={registrations ?? []}
           onPress={(registration) => {
             const activity = registration as RegistrationWithActivity;

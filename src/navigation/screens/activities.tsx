@@ -17,6 +17,7 @@ import Button from "../../components/button/button";
 import ListCard from "../../components/list-card/list-card";
 import { globalStyles } from "../../utilities/styles";
 import { useCallback } from "react";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function ActivitiesScreen() {
   const userInfo = useGetDecodedToken();
@@ -55,16 +56,62 @@ export default function ActivitiesScreen() {
           data={activities}
           listHeaderComponent={() => (
             <>
-              <View style={{ width: "100%", paddingHorizontal: 16, paddingVertical: 20, marginTop: 32, backgroundColor: "#ffffff", elevation: 10, borderRadius: 20}}>
-        
-                <Text style={[globalStyles.title, /* { paddingVertical: 40 } */]}>
-                  Olá, {userInfo?.data.firstName} {userInfo?.data.lastName}!
+              <View
+                style={{
+                  width: "100%",
+                  paddingHorizontal: 16,
+                  paddingVertical: 20,
+                  marginTop: 32,
+                  marginBottom: 16,
+                  backgroundColor: "#ffffff",
+                  /* elevation: 5, */
+                  borderRadius: 20,
+                  borderColor: "tomato",
+                  borderWidth: 2,
+                }}
+              >
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    height: 40,
+                  }}
+                >
+                  <Text
+                    style={[
+                      globalStyles.title /* { paddingVertical: 40 } */,
+                      { color: "tomato", fontWeight: 600 },
+                    ]}
+                  >
+                    Olá, {userInfo?.data.firstName} {userInfo?.data.lastName}!
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    padding: 8,
+                    backgroundColor: "tomato",
+                    borderRadius: 100,
+                    position: "absolute",
+                    top: 16,
+                    right: 16,
+                  }}
+                >
+                  <Ionicons name="bulb" size={16} color="white" />
+                </View>
+                <Text
+                  style={[
+                    globalStyles.regularText,
+                    {
+                      /* paddingBottom: 16 */
+                      color: "tomato",
+                      fontWeight: "500",
+                    },
+                  ]}
+                >
+                  Aqui estão as atividades disponíveis para você participar
                 </Text>
-                 <Text style={[globalStyles.regularText, { /* paddingBottom: 16 */ }]}>
-                Aqui estão as atividades disponíveis para você participar.
-              </Text>
               </View>
-             
             </>
           )}
           style={{ width: "100%" }}

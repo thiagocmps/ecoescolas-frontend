@@ -1,12 +1,8 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import {
-  getActivitiesByCreator,
-} from "../../services/api-requests";
+import { getActivitiesByCreator } from "../../services/api-requests";
 import { useFetchOnFocus } from "../../utilities/fetch-on-focus";
-import {
-  Activity,
-} from "../../utilities/types";
+import { Activity } from "../../utilities/types";
 import { ActivityIndicator } from "react-native";
 import ListCard from "../../components/list-card/list-card";
 import { useNavigation } from "@react-navigation/native";
@@ -17,6 +13,7 @@ import { useCallback } from "react";
 import Button from "../../components/button/button";
 import { Platform } from "react-native";
 import { globalStyles } from "../../utilities/styles";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function MyActivitiesScreen() {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
@@ -51,14 +48,47 @@ export default function MyActivitiesScreen() {
           onPressClose={() => {}}
           data={activities ?? []}
           listHeaderComponent={() => (
-            <>
-              <Text style={[globalStyles.title, { paddingTop: 40 }]}>
-                Olá, {userInfo?.data.firstName} {userInfo?.data.lastName}
-              </Text>
-              <Text style={[globalStyles.regularText, { paddingBottom: 20 }]}>
-                Aqui você pode ver todas as atividades que você criou!
-              </Text>
-            </>
+            <View
+              style={{
+                width: "100%",
+                paddingHorizontal: 16,
+                paddingVertical: 20,
+                marginTop: 32,
+                marginBottom: 16,
+                backgroundColor: "#ffffff",
+                /* elevation: 5, */
+                borderRadius: 20,
+                borderColor: "tomato",
+                borderWidth: 2,
+              }}
+            >
+              <View
+                style={{
+                  padding: 8,
+                  backgroundColor: "tomato",
+                  borderRadius: 100,
+                  position: "absolute",
+                  top: 16,
+                  right: 16,
+                }}
+              >
+                <Ionicons name="bulb" size={16} color="white" />
+              </View>
+              <View style={{ width: "80%" }}>
+                <Text
+                  style={[
+                    globalStyles.regularText,
+                    {
+                      /* paddingBottom: 16 */
+                      color: "tomato",
+                      fontWeight: "500",
+                    },
+                  ]}
+                >
+                  Suas atividades criadas ficarão aqui
+                </Text>
+              </View>
+            </View>
           )}
           onPress={(activity) => {
             const activities = activity as Activity;
