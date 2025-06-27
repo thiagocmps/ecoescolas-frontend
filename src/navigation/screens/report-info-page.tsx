@@ -23,6 +23,7 @@ import { deleteReport, updateReportStatus } from "../../services/api-requests";
 import Button from "../../components/button/button";
 import CustomModal from "../../components/modal/modal";
 import { useState } from "react";
+import { getLabelAndBlocoFromValue } from "../../utilities/get-local-report";
 
 export default function ReportInfoScreen() {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -55,6 +56,8 @@ export default function ReportInfoScreen() {
     createdAt: Date;
   };
 
+  const label = getLabelAndBlocoFromValue(local.sala);
+
   const getCategoryLabel = (value: string): string => {
     const option = optionsCategory.find((opt) => opt.value === value);
     return option ? option.label : "Categoria desconhecida";
@@ -82,8 +85,10 @@ export default function ReportInfoScreen() {
               borderRadius: 10,
             }}
             onPress={() => {
-              deleteReport(_id);
-              {
+              deleteReport(_id).then(() => {
+                navigation.goBack()
+              })
+              /* {
                 Platform.OS === "web"
                   ? navigation.dispatch(
                       CommonActions.reset({
@@ -97,7 +102,7 @@ export default function ReportInfoScreen() {
                         routes: [{ name: "BottomNavigator" }],
                       })
                     );
-              }
+              } */
             }}
           >
             <Ionicons name="trash" size={20} color={"white"} />
@@ -129,7 +134,9 @@ export default function ReportInfoScreen() {
                   ? require("../../../assets/esmad-map/f-selected.png")
                   : local.bloco === "bloco G"
                   ? require("../../../assets/esmad-map/g-selected.png")
-                  : "Sem Bloco"
+                  : local.bloco === "patio"
+                  ? require("../../../assets/esmad-map/patio-selected.png")
+                  : "Sem bloco"
               }
               resizeMode="contain"
               style={[
@@ -206,7 +213,7 @@ export default function ReportInfoScreen() {
             </View>
             <View>
               <Text style={[globalStyles.subtitle, { fontWeight: 500 }]}>
-                {local.bloco} - {local.sala}
+                {label?.bloco} - {label?.label}
               </Text>
               <Text style={[globalStyles.subtitle, { fontWeight: 500 }]}>
                 Descrição:

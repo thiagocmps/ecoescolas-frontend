@@ -44,7 +44,8 @@ export default function RegisterScreen() {
         Toast.show({
           type: "success",
           text1: "Registro feito com sucesso!",
-          text2: "Por favor, aguarde a validação da sua conta antes de fazer login.",
+          text2:
+            "Por favor, aguarde a validação da sua conta antes de fazer login.",
         });
         setlsLoading(false);
         navigation.goBack(); // Navegar para a tela de login após o registro
@@ -55,8 +56,8 @@ export default function RegisterScreen() {
         if (error.response && error.response.status === 400) {
           Toast.show({
             type: "error", // 'success' | 'error' | 'info'
-            text1: "Erro",
-            text2: "Email já está em uso.",
+            text1: "Email já em uso",
+            text2: "Por favor, registre um email diferente",
           });
         } else {
           Toast.show({

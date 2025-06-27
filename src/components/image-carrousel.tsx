@@ -9,7 +9,6 @@ import {
   Pressable,
   TouchableOpacity,
   Platform,
-  useWindowDimensions,
   ViewProps,
   LayoutChangeEvent,
 } from "react-native";

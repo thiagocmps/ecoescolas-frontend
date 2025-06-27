@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Image,
@@ -12,13 +12,14 @@ import * as ImagePicker from 'expo-image-picker';
 import Button from './button/button';
 
 type Props = {
-  onImagesChange?: (images: string[]) => void; // array de base64 strings
-  maxImages?: number;
+  images: string[]; // Agora controlado pelo pai
+  onImagesChange: (images: string[]) => void;
+  maxImages: number;
+  title: string;
 };
 
-export default function ImagePickerMultiple({ onImagesChange, maxImages = 5 }: Props) {
-  const [images, setImages] = useState<string[]>([]);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
+export default function ImagePickerMultiple({ images, onImagesChange, maxImages, title }: Props) {
+  const [previewImage, setPreviewImage] = React.useState<string | null>(null);
 
   const pickImage = async () => {
     if (images.length >= maxImages) {
@@ -42,8 +43,7 @@ export default function ImagePickerMultiple({ onImagesChange, maxImages = 5 }: P
     if (!result.canceled && result.assets?.[0]?.base64) {
       const newImage = result.assets[0].base64;
       const updatedImages = [...images, newImage];
-      setImages(updatedImages);
-      if (onImagesChange) onImagesChange(updatedImages);
+      onImagesChange(updatedImages);
     }
   };
 
@@ -58,8 +58,7 @@ export default function ImagePickerMultiple({ onImagesChange, maxImages = 5 }: P
           style: "destructive",
           onPress: () => {
             const updatedImages = images.filter((_, i) => i !== index);
-            setImages(updatedImages);
-            if (onImagesChange) onImagesChange(updatedImages);
+            onImagesChange(updatedImages);
           },
         },
       ]
@@ -69,7 +68,7 @@ export default function ImagePickerMultiple({ onImagesChange, maxImages = 5 }: P
   return (
     <View style={styles.container}>
       <Button
-        title={`Adicionar Imagem (${images.length}/${maxImages})`}
+        title={`${title} (${images.length}/${maxImages})`}
         onPress={pickImage}
         icon='image-outline'
         variant={"outlined"}

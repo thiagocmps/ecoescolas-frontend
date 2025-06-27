@@ -39,12 +39,13 @@ export interface User {
   firstName: string;
   lastName: string;
   role: string;
+  status: string;
   createdAt: string;
-  status: string; 
   numMecanografico: string;
   registrationData: {
     status: string;
     createdAt: string;
+    images: [string];
   };
 }
 

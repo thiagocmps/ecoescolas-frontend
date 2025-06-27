@@ -27,6 +27,7 @@ type DecodedToken = {
     lastName: string;
     role: string;
     createdAt: string;
+    status: string;
   };
   exp: number;
   iat: number;
@@ -137,7 +138,7 @@ export async function GetToken() {
 export const processingIsValidatedToActivity = async (
   activityId: string,
   userId: string
-): Promise<boolean | null> => {
+): Promise<string | null> => {
   try {
     if (!userId) {
       console.warn("⚠️ userId está vazio ou indefinido.");
@@ -146,8 +147,11 @@ export const processingIsValidatedToActivity = async (
     const response = await api.get("/activities/registrations/user");
 
     const exists = await response.data.some(
-      (registration: Registration) =>
-        registration.activityId === activityId && registration.userId === userId
+      (registration: Registration) => {
+        if (registration.activityId === activityId && registration.userId === userId) {
+          return true;
+        }
+      }
     );
     return exists;
   } catch (error) {
@@ -156,9 +160,12 @@ export const processingIsValidatedToActivity = async (
   }
 };
 
-export const useValidatedToActivity = (activityId: string) => {
+export const useValidatedToActivity = (
+  activityId: string,
+  updateFlag?: boolean // <- novo parâmetro opcional
+) => {
   const decodedToken = useGetDecodedToken();
-  const [isRegistered, setIsRegistered] = useState<boolean | null>(null);
+  const [isRegistered, setIsRegistered] = useState<string | null>(null);
 
   useEffect(() => {
     if (!decodedToken?.data?.id) return;
@@ -172,10 +179,11 @@ export const useValidatedToActivity = (activityId: string) => {
     };
 
     fetchActivity();
-  }, [activityId, decodedToken]);
+  }, [activityId, decodedToken, updateFlag]); // <- updateFlag força revalidação
 
   return isRegistered;
 };
+
 
 
 

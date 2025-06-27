@@ -26,7 +26,7 @@ import {
   CommonActions,
 } from "@react-navigation/native";
 
-const optionsBloco: DropdownOption[] = [
+export const optionsBloco: DropdownOption[] = [
   { label: "Bloco A", value: "bloco A" },
   { label: "Bloco B", value: "bloco B" },
   { label: "Bloco C", value: "bloco C" },
@@ -34,6 +34,7 @@ const optionsBloco: DropdownOption[] = [
   { label: "Bloco E", value: "bloco E" },
   { label: "Bloco F", value: "bloco F" },
   { label: "Bloco G", value: "bloco G" },
+  { label: "Patio", value: "patio" },
 ];
 
 export const optionsCategory: DropdownOption[] = [
@@ -61,41 +62,87 @@ export const optionsCategory: DropdownOption[] = [
   { label: "💡 Lampada avariada", value: "energy_report_4" },
 ];
 
-const salasPorBloco: Record<string, DropdownOption[]> = {
+export const salasPorBloco: Record<string, DropdownOption[]> = {
   "bloco A": [
-    { label: "A101", value: "A101" },
-    { label: "A201", value: "A201" },
-    { label: "A301", value: "A301" },
+    { label: "Auditório Luís Soares", value: "auditorio-luis-soares" },
   ],
   "bloco B": [
-    { label: "B101", value: "B101" },
-    { label: "B201", value: "B201" },
-    { label: "B301", value: "B301" },
+    ...Array.from({ length: 12 }, (_, i) => ({
+      label: `B1${String(i + 1).padStart(2, "0")}`,
+      value: `B1${String(i + 1).padStart(2, "0")}`,
+    })),
+    { label: "Casa de banho - Piso 1", value: "B-banho-1" },
+    ...Array.from({ length: 12 }, (_, i) => ({
+      label: `B2${String(i + 1).padStart(2, "0")}`,
+      value: `B2${String(i + 1).padStart(2, "0")}`,
+    })),
+    { label: "Casa de banho - Piso 2", value: "B-banho-2" },
+    ...Array.from({ length: 12 }, (_, i) => ({
+      label: `B3${String(i + 1).padStart(2, "0")}`,
+      value: `B3${String(i + 1).padStart(2, "0")}`,
+    })),
+    { label: "Casa de banho - Piso 3", value: "B-banho-3" },
   ],
   "bloco C": [
-    { label: "C101", value: "C101" },
-    { label: "C201", value: "C201" },
-    { label: "C301", value: "C301" },
+    ...Array.from({ length: 20 }, (_, i) => ({
+      label: `C1${String(i + 1).padStart(2, "0")}`,
+      value: `C1${String(i + 1).padStart(2, "0")}`,
+    })),
+    { label: "Casa de banho - Piso 1 (1)", value: "C-banho-1a" },
+    { label: "Casa de banho - Piso 1 (2)", value: "C-banho-1b" },
+    ...Array.from({ length: 23 }, (_, i) => ({
+      label: `C2${String(i + 1).padStart(2, "0")}`,
+      value: `C2${String(i + 1).padStart(2, "0")}`,
+    })),
+    { label: "Casa de banho - Piso 2 (1)", value: "C-banho-2a" },
+    { label: "Casa de banho - Piso 2 (2)", value: "C-banho-2b" },
+    // Piso 3
+    ...Array.from({ length: 23 }, (_, i) => ({
+      label: `C3${String(i + 1).padStart(2, "0")}`,
+      value: `C3${String(i + 1).padStart(2, "0")}`,
+    })),
+    { label: "Casa de banho - Piso 3 (1)", value: "C-banho-3a" },
+    { label: "Casa de banho - Piso 3 (2)", value: "C-banho-3b" },
   ],
   "bloco D": [
-    { label: "D101", value: "D101" },
+    ...Array.from({ length: 11 }, (_, i) => ({
+      label: `D1${String(i + 1).padStart(2, "0")}`,
+      value: `D1${String(i + 1).padStart(2, "0")}`,
+    })),
+    { label: "Casa de banho - Piso 1 (1)", value: "D-banho-1a" },
+    { label: "Casa de banho - Piso 1 (2)", value: "D-banho-1b" },
     { label: "D201", value: "D201" },
-    { label: "D301", value: "D301" },
+    { label: "D202", value: "D202" },
+    { label: "Casa de banho - Piso 2 (1)", value: "D-banho-2a" },
+    { label: "Casa de banho - Piso 2 (2)", value: "D-banho-2b" },
   ],
   "bloco E": [
-    { label: "E101", value: "E101" },
-    { label: "E201", value: "E201" },
-    { label: "E301", value: "E301" },
+    { label: "Garagem (Piso 0)", value: "E-garagem" },
+    ...Array.from({ length: 19 }, (_, i) => ({
+      label: `E1${String(i + 1).padStart(2, "0")}`,
+      value: `E1${String(i + 1).padStart(2, "0")}`,
+    })),
+    { label: "Casa de banho - Piso 1", value: "E-banho-1" },
+    ...Array.from({ length: 19 }, (_, i) => ({
+      label: `E2${String(i + 1).padStart(2, "0")}`,
+      value: `E2${String(i + 1).padStart(2, "0")}`,
+    })),
+    { label: "Casa de banho - Piso 2", value: "E-banho-2" },
   ],
   "bloco F": [
-    { label: "F101", value: "F101" },
-    { label: "F201", value: "F201" },
-    { label: "F301", value: "F301" },
+    { label: "Tuna (Piso -1)", value: "F-tuna" },
+    { label: "Refeitório (Piso 0)", value: "F-refeitorio" },
+    { label: "Bar (Piso 1)", value: "F-bar" },
+    ...Array.from({ length: 6 }, (_, i) => ({
+      label: `F3${String(i + 1).padStart(2, "0")}`,
+      value: `F3${String(i + 1).padStart(2, "0")}`,
+    })),
+    { label: "Associação dos Estudantes", value: "F-associacao" },
   ],
-  "bloco G": [
-    { label: "G101", value: "G101" },
-    { label: "G201", value: "G201" },
-    { label: "G301", value: "G301" },
+  "bloco G": [{ label: "Estúdios da ESMAD", value: "estudios-esmad" }],
+  patio: [
+    { label: "Fora da ESMAD", value: "fora-esmad" },
+    { label: "Dentro da ESMAD", value: "dentro-esmad" },
   ],
 };
 
@@ -103,7 +150,7 @@ export default function AddReportScreen() {
   const navigation = useNavigation();
   const userInfo = useGetDecodedToken();
   const userId = userInfo?.data.id;
-  const [selectedImages, setSelectedImages] = useState([]);
+  const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const [inputDescription, setInputDescription] = useState("");
   const [selectedOptionSalas, setSelectedOptionSalas] =
     useState<DropdownOption | null>(null);
@@ -152,6 +199,8 @@ export default function AddReportScreen() {
                   ? require("../../../assets/esmad-map/f-selected.png")
                   : selectedOption?.value === "bloco G"
                   ? require("../../../assets/esmad-map/g-selected.png")
+                  : selectedOption?.value === "patio"
+                  ? require("../../../assets/esmad-map/patio-selected.png")
                   : require("../../../assets/esmad-map/esmad-map.png")
               }
               style={localStyles.image}
@@ -207,8 +256,10 @@ export default function AddReportScreen() {
               subLabel="(opcional)"
             />
             <ImagePickerMultiple
+              images={selectedImages}
               onImagesChange={setSelectedImages}
-              maxImages={5}
+              maxImages={7}
+              title="Adicionar Imagens"
             />
           </View>
         </View>

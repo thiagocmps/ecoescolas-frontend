@@ -23,6 +23,7 @@ export const registerToActivity = async (
     Toast.show({
       type: "error",
       text1: "Erro ao registrar atividade, tente novamente",
+      visibilityTime: 3000,
     });
     return null;
   }
@@ -63,6 +64,7 @@ export const createActivity = async (
     Toast.show({
       type: "error",
       text1: "Erro ao criar atividade, tente novamente",
+      visibilityTime: 3000,
     });
     return null;
   }
@@ -77,6 +79,7 @@ export const getActivities = async (): Promise<Activity[]> => {
     Toast.show({
       type: "error",
       text1: "Erro ao buscar atividades, tente novamente",
+      visibilityTime: 3000,
     });
     return [];
   }
@@ -93,6 +96,7 @@ export const getActivitiesByCreator = async (
     Toast.show({
       type: "error",
       text1: "Erro ao buscar atividades, tente novamente",
+      visibilityTime: 3000,
     });
     return [];
   }
@@ -106,22 +110,25 @@ export const getRegistrationsByUser = async () => {
     Toast.show({
       type: "error",
       text1: "Erro ao buscar atividades",
+      visibilityTime: 3000,
     });
     console.error("Erro ao buscar atividades do usuário:", error);
     return [];
   }
 };
 
-export const getAllMembers = async (activityId: string) => {
+export const getAllMembers = async (
+  activityId: string
+) /* : Promise<User[]> */ => {
   try {
     const response = await api.get(`/activities/members/${activityId}`);
-
     return response.data;
   } catch (error) {
     console.error("Erro ao buscar membros:", error);
     Toast.show({
       type: "error",
       text1: "Erro ao buscar membros, tente novamente",
+      visibilityTime: 3000,
     });
     return [];
   }
@@ -138,6 +145,7 @@ export const deleteRegistration = async (
     Toast.show({
       type: "success",
       text1: "Membro removido!",
+      visibilityTime: 3000,
     });
 
     return response.data;
@@ -215,6 +223,7 @@ export async function validateToActivity(
     Toast.show({
       type: "success",
       text1: "Membro validado!",
+      visibilityTime: 3000,
     });
     return response;
   } catch (error) {
@@ -222,6 +231,7 @@ export async function validateToActivity(
     Toast.show({
       type: "error",
       text1: "Erro ao validar atividade, tente novamente",
+      visibilityTime: 3000,
     });
   }
 }
@@ -232,6 +242,7 @@ export async function deleteActivity(activityId: string) {
     Toast.show({
       type: "success",
       text1: "Atividade deletada!",
+      visibilityTime: 3000,
     });
     return response;
   } catch (error) {
@@ -239,11 +250,10 @@ export async function deleteActivity(activityId: string) {
     Toast.show({
       type: "error",
       text1: "Erro ao deletar atividade, tente novamente",
+      visibilityTime: 3000,
     });
   }
 }
-
-
 
 export async function getReportsByUser(): Promise<any[]> {
   try {
@@ -254,6 +264,7 @@ export async function getReportsByUser(): Promise<any[]> {
     Toast.show({
       type: "error",
       text1: "Erro ao buscar ocorrências, tente novamente",
+      visibilityTime: 3000,
     });
     return [];
   }
@@ -265,12 +276,14 @@ export async function deleteReport(reportId: string): Promise<void> {
     Toast.show({
       type: "success",
       text1: "Ocorrência deletada com sucesso!",
+      visibilityTime: 3000,
     });
   } catch (error) {
     console.error("Erro ao deletar ocorrência:", error);
     Toast.show({
       type: "error",
       text1: "Erro ao deletar ocorrência, tente novamente",
+      visibilityTime: 3000,
     });
   }
 }
@@ -298,12 +311,14 @@ export async function createReport(
       Toast.show({
         type: "success",
         text1: "Ocorrência criada com sucesso!",
+        visibilityTime: 3000,
       });
     }
   } catch (error) {
     Toast.show({
       type: "error",
       text1: "Erro ao tentar criar ocorrênicia",
+      visibilityTime: 3000,
     });
   }
 }
@@ -317,6 +332,7 @@ export async function getAllReports(): Promise<any[]> {
     Toast.show({
       type: "error",
       text1: "Erro ao buscar ocorrências, tente novamente",
+      visibilityTime: 3000,
     });
     return [];
   }
@@ -331,6 +347,7 @@ export async function updateReportStatus(reportId: string, status: string) {
       Toast.show({
         type: "success",
         text1: "Status atualizado com sucesso!",
+        visibilityTime: 3000,
       });
       return true;
     }
@@ -339,6 +356,7 @@ export async function updateReportStatus(reportId: string, status: string) {
     Toast.show({
       type: "error",
       text1: "Erro ao atualizar status da ocorrência, tente novamente",
+      visibilityTime: 3000,
     });
   }
 }
@@ -354,6 +372,7 @@ export async function getAllUsers(): Promise<User[]> {
     Toast.show({
       type: "error",
       text1: "Erro ao buscar utilizadores, tente novamente",
+      visibilityTime: 3000,
     });
     return [];
   }
@@ -392,6 +411,7 @@ export async function patchActivity(
     Toast.show({
       type: "success",
       text1: "Atividade atualizada!",
+      visibilityTime: 3000,
     });
     return response;
   } catch (error) {
@@ -399,18 +419,23 @@ export async function patchActivity(
     Toast.show({
       type: "error",
       text1: "Erro ao atualizar atividade, tente novamente",
+      visibilityTime: 3000,
     });
   }
 }
 
-export async function patchAccount(userId: string, status: string, role: string) {
+export async function patchAccount(
+  userId: string,
+  status: string,
+  role: string
+) {
   try {
-    if (role === "") {
-      const response = await api.patch(`/users/patch/${userId}`, {
+    if (role === "" || role === undefined || role === "manter") {
+      await api.patch(`/users/patch/${userId}`, {
         status: status,
       });
     } else {
-      const response = await api.patch(`/users/patch/${userId}`, {
+      await api.patch(`/users/patch/${userId}`, {
         status: status,
         role: role,
       });
@@ -418,6 +443,7 @@ export async function patchAccount(userId: string, status: string, role: string)
     Toast.show({
       type: "success",
       text1: "Conta validada com sucesso!",
+      visibilityTime: 3000,
     });
   } catch (error) {}
 }
@@ -428,6 +454,7 @@ export async function deleteAccount(userId: string) {
     Toast.show({
       type: "success",
       text1: "Conta deletada com sucesso!",
+      visibilityTime: 3000,
     });
     return response;
   } catch (error) {
@@ -435,6 +462,71 @@ export async function deleteAccount(userId: string) {
     Toast.show({
       type: "error",
       text1: "Erro ao deletar conta, tente novamente",
+      visibilityTime: 3000,
+    });
+  }
+}
+
+export async function processingIsValidatedToActivity(
+  activityId: string
+): Promise<boolean> {
+  try {
+    const response = await api.get(
+      `/activities/registrations/checkStatus/${activityId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao verificar registro do utilizador:", error);
+    Toast.show({
+      type: "error",
+      text1: "Erro ao verificar registro do utilizador, tente novamente",
+      visibilityTime: 3000,
+    });
+    return false;
+  }
+}
+
+export function useIsValidatedToActivity(
+  activityId: string,
+  updateFlag?: boolean // <- parâmetro opcional para forçar atualização
+) {
+  const [isValidated, setIsValidated] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const checkStatus = async () => {
+      const result = await processingIsValidatedToActivity(activityId);
+      setIsValidated(result);
+    };
+
+    checkStatus();
+  }, [activityId, updateFlag]); // <- updateFlag como dependência
+
+  return isValidated;
+}
+
+export async function addImagesToRegistration(
+  activityId: string,
+  userId: string | undefined,
+  images: string[]
+) {
+  try {
+    const response = await api.put(`/activities/registrations/update`, {
+      userId: userId,
+      activityId: activityId,
+      images: images,
+    });
+    Toast.show({
+      type: "success",
+      text1: "Imagem adicionada!",
+      visibilityTime: 3000,
+    });
+    return response;
+  } catch (error) {
+    console.error("Erro ao adicionar imagem:", error);
+    Toast.show({
+      type: "error",
+      text1: "Erro ao adicionar imagem, tente novamente",
+      visibilityTime: 3000,
     });
   }
 }

@@ -8,7 +8,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 
 type BackArrowProps = {
-  style?: TouchableOpacityProps["style"];
+  style?: TouchableOpacityProps["style"];   
   background?: boolean;
 };
 export default function BackArrow({ style, background }: BackArrowProps) {

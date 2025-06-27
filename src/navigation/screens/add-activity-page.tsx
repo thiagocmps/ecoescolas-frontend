@@ -290,6 +290,7 @@ export default function AddActivityScreen() {
                     type: "error",
                     text1: "Erro",
                     text2: "Preencha todos os campos obrigatórios.",
+                    visibilityTime: 3000,
                   });
                   return;
                 } else {
@@ -323,6 +324,7 @@ export default function AddActivityScreen() {
                     type: "error",
                     text1: "Erro",
                     text2: "Preencha todos os campos obrigatórios.",
+                    visibilityTime: 3000,
                   });
                   return;
                 } else {

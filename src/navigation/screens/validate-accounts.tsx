@@ -9,7 +9,7 @@ import { User } from "../../utilities/types";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../routes";
-import { ActivityIndicator } from "react-native-paper";
+import { ActivityIndicator } from "react-native";
 
 export default function ValidateAccountScreen() {
   const navigation =
@@ -22,7 +22,7 @@ export default function ValidateAccountScreen() {
 
   if (loading) {
     return (
-      <View style={globalStyles.screenContainer}>
+      <View style={[globalStyles.screenContainer, { justifyContent: "center" }]}>
         <ActivityIndicator size="large" color="tomato" />
       </View>
     );

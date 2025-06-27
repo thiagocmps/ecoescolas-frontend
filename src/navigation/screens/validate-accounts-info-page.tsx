@@ -80,7 +80,9 @@ export default function ValidateAccountInfoPage() {
         }}
         onPress={() => {
           console.log("Apagar atividade");
-          deleteAccount(_id);
+          deleteAccount(_id).then(() => {
+            navigation.goBack()
+          });
         }}
       >
         <Ionicons name="trash" size={24} color="white" />
@@ -128,7 +130,9 @@ export default function ValidateAccountInfoPage() {
             />
           )}
         </View>
-        {registrationData.status === "pending" && role !== "student" && _id !== userInfo?.data.id ? (
+        {registrationData.status === "pending" &&
+        role !== "student" &&
+        _id !== userInfo?.data.id ? (
           <DropdownSelect
             label="Selecione o tipo de conta"
             subLabel="(Obrigatório)"
@@ -136,6 +140,7 @@ export default function ValidateAccountInfoPage() {
               { label: "Professor", value: "professor" },
               { label: "Segurança", value: "worker" },
               { label: "Administrador", value: "admin" },
+              { label: "Manter função", value: "manter" },
             ]}
             selected={selectedRole}
             onSelect={setSelectedRole}
@@ -182,16 +187,17 @@ export default function ValidateAccountInfoPage() {
         cancelText="Cancelar"
         onClose={() => setModalVisible(false)}
         onConfirm={() => {
-          if (!selectedRole) {
+          if (!selectedRole && role != "student") {
             setModalVisible(false);
             Toast.show({
               type: "error",
               text1:
                 "Por favor, selecione um tipo de conta antes de validar a conta!",
+              visibilityTime: 3000,
             });
             return;
           }
-          patchAccount(_id, "validated", "").then(() => {
+          patchAccount(_id, "validated", selectedRole?.value ?? "").then(() => {
             navigation.goBack();
           });
           setModalVisible(false);

@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "ecoescolas-frontend",
+    "name": "ESMAD Eco-Escolas",
     "slug": "ecoescolas-frontend",
     "extra": {
       "API_BASE_URL": "ashamed-elfrida-thiagocmps-a0126839.koyeb.app",
@@ -16,16 +16,20 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#ff6347"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ecoescolas.frontend",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "package": "com.ecoescolas.frontend",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#ff6347"
       }
     },
     "web": {

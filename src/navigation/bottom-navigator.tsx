@@ -7,7 +7,6 @@ import AccountScreen from "./screens/account";
 import ActivitiesScreen from "./screens/activities";
 import UserRegistrationsScreen from "./screens/subscriptions";
 import ReportScreen from "./screens/report";
-import { StatusBar } from "expo-status-bar";
 import { useGetDecodedToken } from "../utilities/jwtoken-utilities";
 import MyActivitiesScreen from "./screens/my-activities";
 import ValidateAccountScreen from "./screens/validate-accounts";
@@ -19,7 +18,6 @@ function BottomNavigator() {
   const role = userInfo?.data.role;
   return (
     <View style={{ flex: 1 }}>
-      <StatusBar style="auto" />
       <Tab.Navigator
         initialRouteName="Atividades"
         screenOptions={({ route }) => ({

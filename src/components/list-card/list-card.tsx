@@ -1,4 +1,4 @@
-import React from "react";
+import React, { use } from "react";
 import {
   View,
   Text,
@@ -21,7 +21,9 @@ import { useResponsiveWidth } from "../../utilities/responsive-width";
 import { useGetDecodedToken } from "../../utilities/jwtoken-utilities";
 import Tag from "../tag/tag";
 import { optionsCategory } from "../../navigation/screens/add-report-page";
-
+import { useState } from "react";
+import ImageCarrousel from "../image-carrousel";
+import { getLabelAndBlocoFromValue } from "../../utilities/get-local-report";
 type Props = {
   variant:
     | "activity"
@@ -60,7 +62,7 @@ export default function ListCard({
   const currentUser = useGetDecodedToken();
   const userId = currentUser?.data.id;
   const numColumns = Platform.OS === "web" ? 2 : 1;
-
+  const [modalCloseVisible, setModalCloseVisible] = useState(false);
   const cardWidth = useResponsiveWidth(numColumns);
 
   const getCategoryLabel = (value: string): string => {
@@ -203,70 +205,128 @@ export default function ListCard({
           style={[
             style,
             localStyles.membersItem,
-            { width: Platform.OS === "web" ? "100%" : "100%" },
+            {
+              width: Platform.OS === "web" ? "50%" : "90%",
+              alignItems: "center",
+              minHeight: user.registrationData.images.length > 0 ? 300 : 50,
+              /* paddingVertical: 8, */
+            },
           ]}
           onPress={() => onPress(user)}
         >
           <View
             style={{
-              justifyContent: "space-between",
+              flexDirection: "column",
               width: "100%",
-              paddingHorizontal: Platform.OS === "web" ? "25%" : 0,
-              flexDirection: "row",
-              alignItems: Platform.OS === "web" ? "center" : "flex-start",
-              alignSelf: Platform.OS === "web" ? "center" : undefined,
+              paddingVertical: 16,
+              paddingHorizontal: 8,
+              borderWidth: 1,
+              borderColor: "#b8b8b8",
+              borderRadius: 10,
             }}
           >
-            <View style={{ flexDirection: "row" }}>
-              <Text style={{ fontWeight: "bold" }}>
-                {user.firstName} {user.lastName}
-              </Text>
-              {user.numMecanografico ? undefined : (
-                <View
-                  style={{
-                    padding: 4,
-                    backgroundColor: "tomato",
-                    borderRadius: 180,
-                    marginLeft: 8,
-                  }}
+            <View
+              style={{
+                justifyContent: "space-between",
+                width: "100%",
+                /* paddingHorizontal: Platform.OS === "web" ? "25%" : 0, */
+                flexDirection: "row",
+                alignItems: Platform.OS === "web" ? "center" : "center",
+                alignSelf: Platform.OS === "web" ? "center" : undefined,
+              }}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  width: "50%",
+                  justifyContent: "flex-start",
+                }}
+              >
+                <Text
+                  style={
+                    {
+                      /*  fontWeight: "bold" */
+                    }
+                  }
                 >
-                  <Ionicons name="school" size={16} color={"white"}></Ionicons>
+                  {user.firstName} {user.lastName}
+                </Text>
+                {user.numMecanografico ? (
+                  <Text> {user.numMecanografico}</Text>
+                ) : (
+                  <View
+                    style={{
+                      padding: 4,
+                      width: 24,
+                      height: 24,
+                      backgroundColor: "tomato",
+                      borderRadius: 180,
+                      marginLeft: 8,
+                    }}
+                  >
+                    <Ionicons
+                      name="school"
+                      size={16}
+                      color={"white"}
+                    ></Ionicons>
+                  </View>
+                )}
+              </View>
+              {currentUser?.data.id == activityCreator ? (
+                user.registrationData.status === "pending" ? (
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      gap: 20,
+                      borderRadius: 180,
+                      paddingHorizontal: 16,
+                      paddingVertical: 4,
+                    }}
+                  >
+                    <TouchableOpacity onPress={() => onPressAdd(user)}>
+                      <View
+                        style={
+                          {
+                            /* borderWidth: 1.25, borderRadius: 180, padding: 4 */
+                          }
+                        }
+                      >
+                        <Ionicons
+                          name="checkmark"
+                          size={20}
+                          color={"black"}
+                        ></Ionicons>
+                      </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => onPressClose(user)}>
+                      <Ionicons
+                        name="close"
+                        size={20}
+                        color={"black"}
+                      ></Ionicons>
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <View style={{ paddingHorizontal: 16, paddingVertical: 4 }}>
+                    <TouchableOpacity onPress={() => onPressClose(user)}>
+                      <Ionicons
+                        name="close"
+                        size={20}
+                        color={"black"}
+                      ></Ionicons>
+                    </TouchableOpacity>
+                  </View>
+                )
+              ) : null}
+            </View>
+            {Array.isArray(user.registrationData.images) &&
+              user.registrationData.images.length > 0 && (
+                <View style={{ marginTop: 8, marginBottom: 8 }}>
+                  <ImageCarrousel images={user.registrationData.images} />
                 </View>
               )}
-            </View>
-            {currentUser?.data.id == activityCreator ? (
-              user.registrationData.status === "pending" ? (
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    gap: 32,
-                    backgroundColor: "#f0f0f0",
-                    elevation: 5,
-                    borderRadius: 180,
-
-                    paddingHorizontal: 16,
-                    paddingVertical: 4,
-                  }}
-                >
-                  <TouchableOpacity onPress={() => onPressAdd(user)}>
-                    <Ionicons
-                      name="checkmark"
-                      size={20}
-                      color={"black"}
-                    ></Ionicons>
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => onPressClose(user)}>
-                    <Ionicons name="close" size={20} color={"black"}></Ionicons>
-                  </TouchableOpacity>
-                </View>
-              ) : (
-                <TouchableOpacity onPress={() => onPressClose(user)}>
-                  <Ionicons name="close" size={20} color={"black"}></Ionicons>
-                </TouchableOpacity>
-              )
-            ) : null}
           </View>
         </TouchableOpacity>
       );
@@ -300,7 +360,7 @@ export default function ListCard({
                 justifyContent: "space-between",
               }}
             >
-              <View style={{ flexDirection: "row", gap: 8 }}>
+              <View style={{ flexDirection: "row", gap: 8, width: "65%" }}>
                 <Text>
                   {account.firstName} {account.lastName} -{" "}
                   {account.role === "student"
@@ -337,6 +397,7 @@ export default function ListCard({
 
     if (variant === "report") {
       const report = item as Report;
+      const local = getLabelAndBlocoFromValue(report.local.sala);
       return (
         <TouchableOpacity
           style={[
@@ -362,7 +423,9 @@ export default function ListCard({
                 ? require("../../../assets/esmad-map/f-selected.png")
                 : report.local.bloco === "bloco G"
                 ? require("../../../assets/esmad-map/g-selected.png")
-                : "Sem Bloco"
+                : report.local.bloco === "patio"
+                ? require("../../../assets/esmad-map/patio-selected.png")
+                : "Sem bloco"
             }
             resizeMode="contain"
             style={[
@@ -405,11 +468,7 @@ export default function ListCard({
                   style={{
                     padding: 4,
                     backgroundColor: "tomato",
-
                     borderRadius: 10,
-                    /* position: "absolute",
-                top: 8,
-                right: 16, */
                   }}
                   onPress={() => onPressClose(report)}
                 >
@@ -420,7 +479,7 @@ export default function ListCard({
                 style={{ fontSize: 16, fontWeight: "bold" }}
                 numberOfLines={1}
               >
-                {report.local.bloco} - {report.local.sala}
+                {local?.bloco} - {local?.label}
               </Text>
               <View
                 style={{
@@ -484,7 +543,9 @@ export default function ListCard({
       renderItem={renderItem}
       numColumns={1}
       ListHeaderComponent={listHeaderComponent}
-      contentContainerStyle={[localStyles.membersContainer]}
+      contentContainerStyle={[
+        localStyles.membersContainer /* {backgroundColor: "#ff0000"} */,
+      ]}
       style={{ flex: 1 }}
     />
   ) : (
@@ -512,15 +573,14 @@ const localStyles = StyleSheet.create({
   membersItem: {
     alignSelf: "center",
     textAlign: "left",
-    justifyContent: "space-between",
-    height: 50,
-
-    paddingHorizontal: 24,
-    paddingVertical: 8,
+    justifyContent: "center",
+    minHeight: 50,
+    overflow: "hidden",
   },
   membersContainer: {
     justifyContent: "center",
-    paddingBottom: 100,
+    gap: 16,
+    paddingBottom: 50,
   },
   item: {
     backgroundColor: "#ffffff",

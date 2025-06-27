@@ -8,7 +8,7 @@ import {
 import { useRoute } from "@react-navigation/native";
 import Button from "../../components/button/button";
 import {
-  useValidatedToActivity,
+  useValidatedToActivity as useRegisteredToActivity,
   useGetDecodedToken,
 } from "../../utilities/jwtoken-utilities";
 import CustomModal from "../../components/modal/modal";
@@ -17,6 +17,7 @@ import {
   registerToActivity,
   deleteRegistration,
   deleteActivity,
+  useIsValidatedToActivity,
 } from "../../services/api-requests";
 import { useNavigation, CommonActions } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
@@ -34,14 +35,14 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import BackArrow from "../../components/back-arrow/back-arrow";
 import type { RootStackParamList } from "../routes";
 import { StackNavigationProp } from "@react-navigation/stack";
+import ImagePickerMultiple from "../../components/image-picker-multiple";
+import ImageCarousel from "../../components/image-carrousel";
+import { addImagesToRegistration } from "../../services/api-requests";
+import { ImageBackground } from "react-native";
+import { Divider } from "react-native-paper";
 
 export default function ActivityInfoScreen() {
   const route = useRoute();
-  const [modalVisibleSubs, setModalVisibleSubs] = useState(false);
-  const [modalVisibleDeleteActivity, setModalVisibleDeleteActivity] =
-    useState(false);
-
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const { creatorId, _id, title, description, date, info } = route.params as {
     creatorId: string;
     _id: string;
@@ -50,10 +51,34 @@ export default function ActivityInfoScreen() {
     date: string;
     info: Activity["info"];
   };
+
+  const userInfo = useGetDecodedToken();
+  const userId = userInfo?.data?.id;
   const base64Icon = `data:image/png;base64,${info.cover}`;
-  const isRegisteredToActivity = useValidatedToActivity(_id);
-  const decodedToken = useGetDecodedToken();
-  const userId = decodedToken?.data?.id;
+  const [validationUpdated, setValidationUpdated] = useState(false);
+  const isValidatedToActivity = useIsValidatedToActivity(
+    _id,
+    validationUpdated
+  );
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+  const [modalVisibleSubs, setModalVisibleSubs] = useState(false);
+  const [selectedActivityImages, setSelectedActivityImages] = useState<
+    string[]
+  >([]);
+  const [modalVisibleDeleteActivity, setModalVisibleDeleteActivity] =
+    useState(false);
+  const [modalVisibleDeleteRegistration, setModalVisibleDeleteRegistration] =
+    useState(false);
+  const [modalVisibleAddImages, setModalVisibleAddImages] = useState(false);
+  const [isLoadingButton, setIsLoadingButton] = useState(false);
+  const [activityId, setActivityId] = useState<string | null>(null);
+  const [userInformation, setUserInformation] = useState<string | null>(null);
+
+  const [registrationUpdated, setRegistrationUpdated] = useState(false);
+  const isRegisteredToActivity = useRegisteredToActivity(
+    _id,
+    registrationUpdated
+  );
 
   const { data: creator, loading } = useAsync(
     () => getCreatorById(creatorId),
@@ -82,14 +107,17 @@ export default function ActivityInfoScreen() {
           console.log("userId", userId);
           console.log("activityId", activityId);
           validateToActivity(activityId, userId);
+          setValidationUpdated((prev) => !prev);
           refetch();
         }}
         onPressClose={(item) => {
+          setModalVisibleDeleteRegistration(true);
+          console.log("Remover membro");
           const user = item as User;
           const userId = user._id;
           const activityId = _id;
-          deleteRegistration(userId, activityId);
-          refetch();
+          setUserInformation(userId);
+          setActivityId(activityId);
         }}
         activityCreatorId={creatorId}
         data={members ?? []}
@@ -162,7 +190,6 @@ export default function ActivityInfoScreen() {
                 </>
               ) : undefined}
             </View>
-
             <View style={localStyles.contentContainer}>
               <View style={localStyles.titleContainer}>
                 <Text
@@ -204,7 +231,6 @@ export default function ActivityInfoScreen() {
                   />
                 )}
               </View>
-
               <View style={localStyles.infoContainer}>
                 <View>
                   <Text style={localStyles.title}>Professor responsável</Text>
@@ -274,8 +300,39 @@ export default function ActivityInfoScreen() {
                     </Text>
                   </View>
                 )}
+                <Divider></Divider>
+                {isValidatedToActivity === true && (
+                  <View style={{ display: "flex", gap: 8 }}>
+                    <ImagePickerMultiple
+                      images={selectedActivityImages}
+                      onImagesChange={setSelectedActivityImages}
+                      maxImages={7}
+                      title="Adicionar imagens da atividade"
+                    />
+                    <Button
+                      title="Finalizar atividade"
+                      icon="cloud-upload-outline"
+                      isLoading={isLoadingButton}
+                      onPress={() => {
+                        if (selectedActivityImages.length === 0) {
+                          Toast.show({
+                            type: "error",
+                            text1:
+                              "Por favor, adicione imagens antes de submeter",
+                            position: "top",
+                            visibilityTime: 3000,
+                          });
+                          return;
+                        }
+                        setModalVisibleAddImages(true);
+                      }}
+                    />
+                  </View>
+                )}
                 <View>
-                  <Text style={[localStyles.title]}>Membros</Text>
+                  <Text style={[localStyles.title, { paddingTop: 24 }]}>
+                    Membros
+                  </Text>
                 </View>
                 {members?.length == 0 ? (
                   <View>
@@ -344,43 +401,44 @@ export default function ActivityInfoScreen() {
               cancelText="Cancelar"
               onClose={() => setModalVisibleDeleteActivity(false)}
               onConfirm={() => {
-                deleteActivity(_id);
-                Toast.show({
-                  type: "success",
-                  text1: "Atividade eliminada com sucesso! 😊",
-                  position: "top",
-                  visibilityTime: 3000,
+                console.log()
+                deleteActivity(_id).then(() => {
+                  Toast.show({
+                    type: "success",
+                    text1: "Atividade eliminada com sucesso! 😊",
+                    position: "top",
+                    visibilityTime: 3000,
+                  });
+                  {
+                    Platform.OS == "web"
+                      ? navigation.dispatch(
+                          CommonActions.reset({
+                            index: 0,
+                            routes: [
+                              {
+                                name: "WebDrawer",
+                                state: {
+                                  routes: [{ name: "Atividades" }],
+                                },
+                              },
+                            ],
+                          })
+                        )
+                      : navigation.dispatch(
+                          CommonActions.reset({
+                            index: 0,
+                            routes: [
+                              {
+                                name: "BottomNavigator",
+                                state: {
+                                  routes: [{ name: "activities" }],
+                                },
+                              },
+                            ],
+                          })
+                        );
+                  }
                 });
-                {
-                  Platform.OS == "web"
-                    ? navigation.dispatch(
-                        CommonActions.reset({
-                          index: 0,
-                          routes: [
-                            {
-                              name: "WebDrawer",
-                              state: {
-                                routes: [{ name: "Atividades" }],
-                              },
-                            },
-                          ],
-                        })
-                      )
-                    : navigation.dispatch(
-                        CommonActions.reset({
-                          index: 0,
-                          routes: [
-                            {
-                              name: "BottomNavigator",
-                              state: {
-                                routes: [{ name: "activities" }],
-                              },
-                            },
-                          ],
-                        })
-                      );
-                }
-
                 setModalVisibleDeleteActivity(false);
               }}
               onCancel={() => {
@@ -390,6 +448,73 @@ export default function ActivityInfoScreen() {
             >
               <Text>
                 Tens a certeza de que queres apagar a atividade {title}?
+              </Text>
+            </CustomModal>
+            <CustomModal
+              visible={modalVisibleDeleteRegistration}
+              title="Eliminar inscrição"
+              confirmText="Confirmar"
+              cancelText="Cancelar"
+              onClose={() => setModalVisibleDeleteRegistration(false)}
+              onConfirm={async () => {
+                if (userInformation && activityId) {
+                  await deleteRegistration(userInformation, activityId);
+                  Toast.show({
+                    type: "success",
+                    text1: "Inscrição eliminada com sucesso! 😊",
+                    position: "top",
+                    visibilityTime: 3000,
+                  });
+                  await refetch();
+                  setRegistrationUpdated((prev) => !prev);
+                  setModalVisibleDeleteRegistration(false);
+                  setValidationUpdated((prev) => !prev);
+                }
+              }}
+              onCancel={() => {
+                console.log("Utilizador não saiu");
+                setModalVisibleDeleteRegistration(false);
+              }}
+            >
+              <Text>Tem certeza que deseja eliminar a inscrição?</Text>
+            </CustomModal>
+            <CustomModal
+              visible={modalVisibleAddImages}
+              title="Adicionar Imagens"
+              confirmText="Confirmar"
+              cancelText="Cancelar"
+              onClose={() => setModalVisibleAddImages(false)}
+              onConfirm={async () => {
+                setIsLoadingButton(true);
+                console.log(userInformation);
+                console.log(activityId);
+                addImagesToRegistration(
+                  _id,
+                  userInfo?.data.id,
+                  selectedActivityImages
+                ).then(() => {
+                  setIsLoadingButton(false);
+                });
+                Toast.show({
+                  type: "success",
+                  text1: "Imagens adicionadas com sucesso! 😊",
+                  position: "top",
+                  visibilityTime: 3000,
+                });
+                refetch();
+                setRegistrationUpdated((prev) => !prev);
+                setModalVisibleAddImages(false);
+                setValidationUpdated((prev) => !prev);
+              }}
+              onCancel={() => {
+                console.log("Utilizador não saiu");
+                setModalVisibleAddImages(false);
+              }}
+            >
+              <Text>
+                Tem certeza que deseja adicionar as imagens? Estas serão
+                visíveis para todos os membros da atividade e substituirão as
+                imagens existentes.
               </Text>
             </CustomModal>
           </View>

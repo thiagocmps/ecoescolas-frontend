@@ -79,7 +79,7 @@ const TextInput: React.FC<TextInputProps> = ({
             placeholder={placeholder}
             onChangeText={onChangeText}
             value={value}
-            style={{ flex: 1, height: "100%", width: "100%", paddingTop: 10 }}
+            style={{ flex: 1, height: "100%", width: "100%", paddingTop: 10, color: "#000",}}
             placeholderTextColor="#ccc"
             onSubmitEditing={onSubmitEditing}
             multiline={true}
@@ -93,7 +93,7 @@ const TextInput: React.FC<TextInputProps> = ({
             placeholder={placeholder}
             onChangeText={onChangeText}
             value={value}
-            style={{ flex: 1, height: "100%", width: "100%" }}
+            style={{ flex: 1, height: "100%", width: "100%", color: "#000",}}
             placeholderTextColor="#ccc"
             autoCapitalize="none"
           />
