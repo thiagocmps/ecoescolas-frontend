@@ -1,16 +1,15 @@
 {
   "name": "ecoescolas-app",
-  "homepage": "https://github.com/thiagocmps/ecoescolas-frontend.git",
+  "homepage": "https://thiagocmps.github.io/ecoescolas-frontend",
   "version": "1.0.0",
   "private": true,
   "license": "0BSD",
   "main": "index.ts",
   "scripts": {
     "start": "expo start",
-    "predeploy": "npm run build",
+    "predeploy": "npm run web-build",
     "web-build": "expo export --platform web",
     "deploy": "gh-pages -d dist",
-    "build": "react-scripts build",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web"
