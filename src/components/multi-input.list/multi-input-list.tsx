@@ -1,27 +1,28 @@
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Button from "../button/button";
 import { useState } from "react";
 import Input from "../input/input";
 import { Ionicons } from "@expo/vector-icons";
 
+export type MessageObject = {
+    messageInfo: string;
+    createdAt: string;
+};
+
 type Props = {
+  type: "array" | "object";
   label: string;
   placeholder?: string;
   icon?: React.ComponentProps<typeof Ionicons>["name"];
   subLabel?: string;
   onSubmitEditing?: () => void;
-  items: string[];
-  onAdd: (item: string) => void;
+  items: string[] | MessageObject[];
+  onAdd: (item: string | MessageObject) => void;
   onRemove: (index: number) => void;
 };
 
 export default function MultiInputList({
+  type,
   label,
   placeholder,
   icon,
@@ -35,7 +36,18 @@ export default function MultiInputList({
 
   const adicionar = () => {
     if (!input.trim()) return;
-    onAdd(input.trim());
+
+    if (type === "array") {
+      onAdd(input.trim());
+    } else {
+      const newObj: MessageObject = {
+          messageInfo: input.trim(),
+          createdAt: new Date().toISOString(),
+        
+      };
+      onAdd(newObj);
+    }
+
     setInput("");
   };
 
@@ -43,17 +55,21 @@ export default function MultiInputList({
     <View style={localStyles.container}>
       <View>
         <Text style={localStyles.label}>{label}</Text>
-        {subLabel && <Text style={{ fontSize: 12, color: "#666", fontStyle: "italic" }}>{subLabel}</Text>}
+        {subLabel && (
+          <Text style={{ fontSize: 12, color: "#666", fontStyle: "italic" }}>
+            {subLabel}
+          </Text>
+        )}
       </View>
       <View style={localStyles.inputRow}>
         <Input
           value={input}
           type="input"
           placeholder={placeholder}
-          onSubmitEditing={onSubmitEditing} 
           icon={icon}
           onChangeText={setInput}
-        ></Input>
+          onSubmitEditing={onSubmitEditing}
+        />
         <Button
           icon="add-outline"
           onPress={adicionar}
@@ -61,16 +77,25 @@ export default function MultiInputList({
         />
       </View>
 
-      {items.map((item, index) => (
-        <TouchableOpacity
-          key={index}
-          onPress={() => onRemove(index)}
-          style={localStyles.item}
-        >
-          <Text style={localStyles.itemText}>{item}</Text>
-          <Text style={localStyles.removeText}>✕</Text>
-        </TouchableOpacity>
-      ))}
+      {items.map((item, index) => {
+        const displayText =
+          type === "array"
+            ? (item as string)
+            : `${(item as MessageObject).messageInfo} — ${new Date(
+                (item as MessageObject).createdAt
+              ).toLocaleString()}`;
+
+        return (
+          <TouchableOpacity
+            key={index}
+            onPress={() => onRemove(index)}
+            style={localStyles.item}
+          >
+            <Text style={localStyles.itemText}>{displayText}</Text>
+            <Text style={localStyles.removeText}>✕</Text>
+          </TouchableOpacity>
+        );
+      })}
     </View>
   );
 }
@@ -90,13 +115,6 @@ const localStyles = StyleSheet.create({
     gap: 8,
     alignItems: "center",
   },
-  input: {
-    flex: 1,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    borderRadius: 8,
-    padding: 10,
-  },
   addButton: {
     width: 60,
     height: 50,
@@ -113,9 +131,11 @@ const localStyles = StyleSheet.create({
   },
   itemText: {
     fontSize: 14,
+    flex: 1,
   },
   removeText: {
     color: "#d00",
     fontWeight: "bold",
+    marginLeft: 12,
   },
 });

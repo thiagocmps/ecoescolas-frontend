@@ -54,7 +54,6 @@ export default function ActivitiesScreen() {
           onPressAdd={() => {}}
           creatorTagVisible={true}
           data={activities}
-        
           style={{ width: "100%" }}
           onPress={(item) => {
             const activity = item as Activity;
@@ -63,6 +62,8 @@ export default function ActivitiesScreen() {
               _id: activity._id,
               title: activity.title,
               description: activity.description,
+              visible: activity.visible,
+              message: activity.message,
               date: String(activity.date),
               info: activity.info,
             });

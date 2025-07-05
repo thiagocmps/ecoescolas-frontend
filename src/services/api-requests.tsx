@@ -530,3 +530,34 @@ export async function addImagesToRegistration(
     });
   }
 }
+
+type ActivityMessage = {
+  createdAt: string;
+  messageInfo: string;
+};
+
+export async function patchActivityMessages(
+  message: ActivityMessage[],
+  activityId: string
+) {
+  try {
+    const response = await api.patch(`/activities/update/${activityId}`, {
+      message,
+    });
+
+    Toast.show({
+      type: "success",
+      text1: "Mensagens atualizadas!",
+      visibilityTime: 3000,
+    });
+
+    return response;
+  } catch (error: any) {
+    console.error("Erro ao atualizar atividade:", error?.response?.data || error);
+    Toast.show({
+      type: "error",
+      text1: "Erro ao atualizar mensagens, tente novamente",
+      visibilityTime: 3000,
+    });
+  }
+}

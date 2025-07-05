@@ -5,6 +5,7 @@ export interface Activity {
   creatorId: string;
   date: String;
   visible: boolean;
+  message: Array<string>;
   info: {
     objetivos: string;
     enquadramento: string;
@@ -17,7 +18,7 @@ export interface Activity {
     cover: string;
   };
 }
-
+  
 export interface Registration {
   _id: string;
   activityId: string;

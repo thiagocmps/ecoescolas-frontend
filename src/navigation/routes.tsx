@@ -22,7 +22,7 @@ import AddReportScreen from "./screens/add-report-page";
 import ReportInfoScreen from "./screens/report-info-page";
 import ValidateAccountScreen from "./screens/validate-accounts";
 import ValidateAccountInfoPage from "./screens/validate-accounts-info-page";
-
+import { Activity } from "../utilities/types"
 export type RootStackParamList = {
   Login: undefined;
   Register: undefined;
@@ -80,24 +80,7 @@ export type RootStackParamList = {
   };
   CreatedActivities: undefined;
   AddReport?: undefined;
-  ActivityInfoScreen: {
-    _id: string;
-    title: string;
-    creatorId: String;
-    description: string;
-    date: string;
-    info: {
-      cover: string;
-      enquadramento: string;
-      objetivos: string;
-      atividades: string;
-      info_solicitada: string;
-      prazos: string;
-      criterio_de_avaliacao: string;
-      juri: string[];
-      premios_mencoes_honrosas: string;
-    };
-  };
+  ActivityInfoScreen: Activity;
 };
 
 const Stack = createNativeStackNavigator();
@@ -430,7 +413,7 @@ export default function Routes() {
             headerTransparent: true,
           }}
         />
-        
+
         <Stack.Screen
           name="AddReport"
           component={AddReportScreen}

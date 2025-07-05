@@ -223,11 +223,12 @@ export default function AddActivityScreen() {
                 onChangeText={setCritérios}
               />
               <MultiInputList
+                type="array"
                 label="Júri:"
                 subLabel="(obrigatório)"
                 placeholder="Nome do membro do júri"
                 items={juris}
-                onAdd={(item) => setJuris([...juris, item])}
+                onAdd={(item) => setJuris([...juris, item as string])}
                 onRemove={(index) =>
                   setJuris(juris.filter((_, i) => i !== index))
                 }

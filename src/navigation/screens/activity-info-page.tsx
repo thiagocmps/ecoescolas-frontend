@@ -26,7 +26,7 @@ import { Activity, User } from "../../utilities/types";
 import ListCard from "../../components/list-card/list-card";
 import { getAllMembers } from "../../services/api-requests";
 import { useFetchOnFocus } from "../../utilities/fetch-on-focus";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { globalStyles } from "../../utilities/styles";
 import { useAsync } from "../../services/api-requests";
 import { getCreatorById } from "../../services/api-requests";
@@ -36,21 +36,25 @@ import BackArrow from "../../components/back-arrow/back-arrow";
 import type { RootStackParamList } from "../routes";
 import { StackNavigationProp } from "@react-navigation/stack";
 import ImagePickerMultiple from "../../components/image-picker-multiple";
-import ImageCarousel from "../../components/image-carrousel";
-import { addImagesToRegistration } from "../../services/api-requests";
-import { ImageBackground } from "react-native";
+import {
+  addImagesToRegistration,
+  patchActivityMessages,
+} from "../../services/api-requests";
 import { Divider } from "react-native-paper";
+import MultiInputList from "../../components/multi-input.list/multi-input-list";
 
 export default function ActivityInfoScreen() {
   const route = useRoute();
-  const { creatorId, _id, title, description, date, info } = route.params as {
-    creatorId: string;
-    _id: string;
-    title: string;
-    description: string;
-    date: string;
-    info: Activity["info"];
-  };
+  const { creatorId, _id, title, description, date, info, message } =
+    route.params as {
+      creatorId: string;
+      _id: string;
+      title: string;
+      description: string;
+      date: string;
+      message: Object[];
+      info: Activity["info"];
+    };
 
   const userInfo = useGetDecodedToken();
   const userId = userInfo?.data?.id;
@@ -94,6 +98,20 @@ export default function ActivityInfoScreen() {
   } = useFetchOnFocus(fetchMembers, {
     delay: 200,
   });
+
+  const [newMessage, setNewMessage] = useState<{ createdAt: string; messageInfo: string }[]>([]);
+
+
+  useEffect(() => {
+    if (message && Array.isArray(message)) {
+      setNewMessage(
+        message.map((msg: any) => ({
+          createdAt: msg.createdAt ?? new Date().toISOString(),
+          messageInfo: msg.messageInfo ?? msg.message ?? "",
+        }))
+      );
+    }
+  }, [message]);
 
   return (
     <View style={localStyles.screenContainer}>
@@ -232,6 +250,58 @@ export default function ActivityInfoScreen() {
                 )}
               </View>
               <View style={localStyles.infoContainer}>
+                {userId === creatorId ? (
+                  <>
+                    <MultiInputList
+                      type="object"
+                      label="Adicione uma mensagem:"
+                      subLabel="(Todos os inscritos irão ver)"
+                      placeholder="Escreva sua mensagem aqui"
+                      items={newMessage}
+                      onAdd={(item) =>
+                        setNewMessage([
+                          ...newMessage,
+                          typeof item === "string"
+                            ? {
+                                messageInfo: item,
+                                createdAt: new Date().toISOString(),
+                              }
+                            : item,
+                        ])
+                      }
+                      onRemove={(index) =>
+                        setNewMessage(newMessage.filter((_, i) => i !== index))
+                      }
+                    />
+                    <Button
+                      onPress={() => patchActivityMessages(newMessage, _id)}
+                      title="Atualizar mensagens"
+                      icon="chatbox-ellipses-outline"
+                      variant="outlined"
+                    />
+                    <Divider />
+                  </>
+                ) : (
+                  <View style={{ gap: 8, marginBottom: 16 }}>
+                    {Array.isArray(message) && message.length > 0 ? (
+                      message.map((msg: any, index: number) => (
+                        <View key={index} style={localStyles.item}>
+                          <View style={{ flex: 1 }}>
+                            <Text style={localStyles.itemText}>
+                              {typeof msg === "string" ? msg : msg.messageInfo}
+                            </Text>
+                            {typeof msg !== "string" && msg.createdAt && (
+                              <Text style={{ fontSize: 10, color: "#666" }}>
+                                {new Date(msg.createdAt).toLocaleString()}
+                              </Text>
+                            )}
+                          </View>
+                        </View>
+                      ))
+                    ) : undefined}
+                  </View>
+                )}
+
                 <View>
                   <Text style={localStyles.title}>Professor responsável</Text>
                   <Text
@@ -401,7 +471,7 @@ export default function ActivityInfoScreen() {
               cancelText="Cancelar"
               onClose={() => setModalVisibleDeleteActivity(false)}
               onConfirm={() => {
-                console.log()
+                console.log();
                 deleteActivity(_id).then(() => {
                   Toast.show({
                     type: "success",
@@ -567,5 +637,16 @@ const localStyles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
+  },
+  item: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    backgroundColor: "#f2f2f2",
+    padding: 12,
+    borderRadius: 8,
+  },
+  itemText: {
+    fontSize: 14,
+    flex: 1,
   },
 });

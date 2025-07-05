@@ -573,6 +573,7 @@ const localStyles = StyleSheet.create({
   membersItem: {
     alignSelf: "center",
     textAlign: "left",
+    minWidth: 160,
     justifyContent: "center",
     minHeight: 50,
     overflow: "hidden",
@@ -585,6 +586,7 @@ const localStyles = StyleSheet.create({
   item: {
     backgroundColor: "#ffffff",
     justifyContent: "center",
+    minWidth: 160,
     borderRadius: 20,
     marginVertical: 8,
     overflow: "hidden",
