@@ -2,12 +2,6 @@
   "expo": {
     "name": "ESMAD Eco-Escolas",
     "slug": "ecoescolas-frontend",
-    "extra": {
-      "API_BASE_URL": "ashamed-elfrida-thiagocmps-a0126839.koyeb.app",
-      "eas": {
-        "projectId": "fa5ceb4c-19a7-4d3a-9a1d-f46684e9456b"
-      }
-    },
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -37,6 +31,12 @@
       "build": {
         "output": "static",
         "basePath": "/ecoescolas-frontend"
+      }
+    },
+    "extra": {
+      "API_BASE_URL": "ashamed-elfrida-thiagocmps-a0126839.koyeb.app",
+      "eas": {
+        "projectId": "fa5ceb4c-19a7-4d3a-9a1d-f46684e9456b"
       }
     },
     "owner": "thiaaago"
