@@ -8,7 +8,7 @@
   "scripts": {
     "start": "expo start",
     "predeploy": "npm run web-build",
-    "web-build": "expo export --platform web",
+    "web-build": "expo export --platform web && node fix-paths.js",
     "deploy": "gh-pages -d dist",
     "android": "expo start --android",
     "ios": "expo start --ios",
