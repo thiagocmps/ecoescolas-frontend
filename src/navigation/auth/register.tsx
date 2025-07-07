@@ -10,6 +10,7 @@ import EmailVerificationModal, {
   EmailVerificationRef,
 } from "../../components/email-verification-modal";
 import { useRef } from "react";
+import BackArrow from "../../components/back-arrow/back-arrow";
 
 export default function RegisterScreen() {
   const [email, setEmail] = useState("");
@@ -121,6 +122,7 @@ export default function RegisterScreen() {
           >
             <Input
               type="input"
+              
               placeholder="Digite aqui seu nome"
               onChangeText={setFirstName}
               icon="person-outline"
@@ -138,6 +140,7 @@ export default function RegisterScreen() {
             <Input
               type="input"
               placeholder="Digite aqui seu email da ESMAD"
+              subLabel="(apenas Email da ESMAD, Ex.: nome@esmad.ipp.pt ou )"
               onChangeText={setEmail}
               value={email}
               icon="mail-outline"
@@ -219,6 +222,7 @@ export default function RegisterScreen() {
         />
       </ScrollView>
       <EmailVerificationModal ref={emailVerificationRef} email={email} />
+      <BackArrow background={true}></BackArrow>
     </View>
   );
 }
