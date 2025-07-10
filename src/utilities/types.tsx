@@ -1,6 +1,7 @@
 export interface Activity {
   _id: string;
   title: string;
+  type: string;
   description: string;
   creatorId: string;
   date: String;

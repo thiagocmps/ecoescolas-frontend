@@ -31,6 +31,7 @@ export const registerToActivity = async (
 
 export const createActivity = async (
   titulo: string,
+  type: string,
   descricao: string,
   enquadramento: string,
   objetivos: string,
@@ -42,11 +43,13 @@ export const createActivity = async (
   juris: string[],
   base64Image: string | null
 ) => {
+  console.log(type)
   try {
     await api.post("/activities/add", {
       title: titulo,
       description: descricao,
       date: new Date(),
+      type: type,
       info: {
         objetivos: objetivos,
         enquadramento: enquadramento,

@@ -61,6 +61,7 @@ export default function ActivitiesScreen() {
               creatorId: activity.creatorId,
               _id: activity._id,
               title: activity.title,
+              type: activity.type,
               description: activity.description,
               visible: activity.visible,
               message: activity.message,

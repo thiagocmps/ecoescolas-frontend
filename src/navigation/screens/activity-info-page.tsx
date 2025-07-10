@@ -45,11 +45,12 @@ import MultiInputList from "../../components/multi-input.list/multi-input-list";
 
 export default function ActivityInfoScreen() {
   const route = useRoute();
-  const { creatorId, _id, title, description, date, info, message } =
+  const { creatorId, _id, title, type, description, date, info, message } =
     route.params as {
       creatorId: string;
       _id: string;
       title: string;
+      type: string;
       description: string;
       date: string;
       message: Object[];
@@ -99,8 +100,9 @@ export default function ActivityInfoScreen() {
     delay: 200,
   });
 
-  const [newMessage, setNewMessage] = useState<{ createdAt: string; messageInfo: string }[]>([]);
-
+  const [newMessage, setNewMessage] = useState<
+    { createdAt: string; messageInfo: string }[]
+  >([]);
 
   useEffect(() => {
     if (message && Array.isArray(message)) {
@@ -283,22 +285,24 @@ export default function ActivityInfoScreen() {
                   </>
                 ) : (
                   <View style={{ gap: 8, marginBottom: 16 }}>
-                    {Array.isArray(message) && message.length > 0 ? (
-                      message.map((msg: any, index: number) => (
-                        <View key={index} style={localStyles.item}>
-                          <View style={{ flex: 1 }}>
-                            <Text style={localStyles.itemText}>
-                              {typeof msg === "string" ? msg : msg.messageInfo}
-                            </Text>
-                            {typeof msg !== "string" && msg.createdAt && (
-                              <Text style={{ fontSize: 10, color: "#666" }}>
-                                {new Date(msg.createdAt).toLocaleString()}
+                    {Array.isArray(message) && message.length > 0
+                      ? message.map((msg: any, index: number) => (
+                          <View key={index} style={localStyles.item}>
+                            <View style={{ flex: 1 }}>
+                              <Text style={localStyles.itemText}>
+                                {typeof msg === "string"
+                                  ? msg
+                                  : msg.messageInfo}
                               </Text>
-                            )}
+                              {typeof msg !== "string" && msg.createdAt && (
+                                <Text style={{ fontSize: 10, color: "#666" }}>
+                                  {new Date(msg.createdAt).toLocaleString()}
+                                </Text>
+                              )}
+                            </View>
                           </View>
-                        </View>
-                      ))
-                    ) : undefined}
+                        ))
+                      : undefined}
                   </View>
                 )}
 

@@ -25,7 +25,8 @@ import { Ionicons } from "@expo/vector-icons";
 import BackArrow from "../../components/back-arrow/back-arrow";
 import Toast from "react-native-toast-message";
 import { useEffect } from "react";
-
+import DropdownSelect from "../../components/dropdown-select/dropdown-select";
+import type { DropdownOption } from "../../components/dropdown-select/dropdown-select";
 export default function AddActivityScreen() {
   const userInfo = useGetDecodedToken();
   const [titulo, setTitulo] = useState("");
@@ -43,6 +44,13 @@ export default function AddActivityScreen() {
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisibleEdit, setModalVisibleEdit] = useState(false);
+
+  const dropdownOptionsType: DropdownOption[] = [
+    { label: "Convencional", value: "normal" },
+    { label: "Gasto mensal", value: "gasto_mensal" },
+  ];
+  const [selectedOptionType, setSelectedOptionType] =
+    useState<DropdownOption | null>(null);
   const navigation = useNavigation();
   const route = useRoute();
   const {
@@ -174,6 +182,18 @@ export default function AddActivityScreen() {
                 value={titulo}
                 onChangeText={setTitulo}
               />
+
+              <DropdownSelect
+                label="Tipo de atividade:"
+                subLabel="(obrigatório)"
+                options={dropdownOptionsType}
+                selected={selectedOptionType}
+                onSelect={setSelectedOptionType}
+                placeholder="Escolha a sala"
+                containerStyle={{
+                  zIndex: Platform.OS === "web" ? 90 : undefined,
+                }}
+              />
               <Input
                 label="Descrição:"
                 subLabel="(obrigatório)"
@@ -249,20 +269,6 @@ export default function AddActivityScreen() {
                 value={premios}
                 onChangeText={setPremios}
               />
-              {/* <Button
-                icon="images-outline"
-                title="Adicionar imagem"
-                contentColor={"#ccc"}
-                variant="outlined"
-                style={{
-                  marginTop: 10,
-                  height: 100,
-                  borderRadius: 20,
-                  width: Platform.OS == "web" ? "100%" : "100%",
-                  borderColor: "#ccc",
-                }}
-                onPress={() => {}}
-              /> */}
               {imageUri && (
                 <View style={localStyles.preview}>
                   <Image source={{ uri: imageUri }} style={localStyles.image} />
@@ -295,7 +301,7 @@ export default function AddActivityScreen() {
                   });
                   return;
                 } else {
-                  setModalVisibleEdit(true)
+                  setModalVisibleEdit(true);
                 }
               }}
               title="Editar atividade"
@@ -303,7 +309,7 @@ export default function AddActivityScreen() {
               icon="pencil-outline"
               style={{
                 position: "absolute",
-                bottom: 46, 
+                bottom: 46,
                 width: Platform.OS == "web" ? 200 : "100%",
               }}
             />
@@ -311,14 +317,15 @@ export default function AddActivityScreen() {
             <Button
               onPress={() => {
                 console.log("Dados da atividade:");
-                /* setModalVisible(true); */
+                console.log(selectedOptionType?.value)
                 if (
                   !titulo ||
                   !descricao ||
                   !objetivos ||
                   !prazos ||
                   !criterios ||
-                  !juris.length
+                  !juris.length ||
+                  !selectedOptionType?.value
                 ) {
                   console.log("preencha tudinho");
                   Toast.show({
@@ -343,7 +350,6 @@ export default function AddActivityScreen() {
             />
           )}
         </View>
-
         <CustomModal
           visible={modalVisible}
           title="Criando atividade"
@@ -354,6 +360,7 @@ export default function AddActivityScreen() {
             console.log("Atividade criada.");
             createActivity(
               titulo,
+              selectedOptionType?.value ?? "",
               descricao,
               enquadramento,
               objetivos,
@@ -398,7 +405,7 @@ export default function AddActivityScreen() {
           onClose={() => setModalVisibleEdit(false)}
           onConfirm={() => {
             console.log("Atividade editada.");
-            console.log("activityId ", activityId)
+            console.log("activityId ", activityId);
             patchActivity(
               activityId ?? "",
               titulo,
