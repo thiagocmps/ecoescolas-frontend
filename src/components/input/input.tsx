@@ -4,11 +4,9 @@ import {
   Text,
   StyleSheet,
   TextInput as NativeTextInput,
-  KeyboardAvoidingView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Platform } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
 
 type TextInputProps = {
   secureTextEntry?: boolean;
@@ -36,14 +34,21 @@ const TextInput: React.FC<TextInputProps> = ({
   type,
 }) => {
   return (
-    <ScrollView style={[{ width: "100%" }, style]}>
+    <View style={[{ width: "100%" }, style]}>
       {label && (
         <Text style={{ marginBottom: 5, fontSize: 16, color: "#333" }}>
           {label}
         </Text>
       )}
       {subLabel && (
-        <Text style={{ marginBottom: 5, fontSize: 12, color: "#666", fontStyle: "italic" }}>
+        <Text
+          style={{
+            marginBottom: 5,
+            fontSize: 12,
+            color: "#666",
+            fontStyle: "italic",
+          }}
+        >
           {subLabel}
         </Text>
       )}
@@ -79,7 +84,7 @@ const TextInput: React.FC<TextInputProps> = ({
             placeholder={placeholder}
             onChangeText={onChangeText}
             value={value}
-            style={{ flex: 1, height: "100%", width: "100%", paddingTop: 10, color: "#000",}}
+            style={{ flex: 1, paddingTop: 10, color: "#000" }}
             placeholderTextColor="#ccc"
             onSubmitEditing={onSubmitEditing}
             multiline={true}
@@ -93,13 +98,13 @@ const TextInput: React.FC<TextInputProps> = ({
             placeholder={placeholder}
             onChangeText={onChangeText}
             value={value}
-            style={{ flex: 1, height: "100%", width: "100%", color: "#000",}}
+            style={{ flex: 1, color: "#000" }}
             placeholderTextColor="#ccc"
             autoCapitalize="none"
           />
         )}
       </View>
-    </ScrollView>
+    </View>
   );
 };
 

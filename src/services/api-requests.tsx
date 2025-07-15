@@ -534,6 +534,33 @@ export async function addImagesToRegistration(
   }
 }
 
+
+export async function addMonthlyExpenseToRegistration(
+  activityId: string,
+  userId: string | undefined,
+  monthlyExpense: Object
+) {
+  try {
+    const response = await api.put(`/activities/registrations/update`, {
+      userId: userId,
+      activityId: activityId,
+      monthlyExpense: monthlyExpense,
+    });
+    Toast.show({
+      type: "success",
+      text1: "Imagem adicionada!",
+      visibilityTime: 3000,
+    });
+    return response;
+  } catch (error) {
+    console.error("Erro ao adicionar gasto mensal:", error);
+    Toast.show({
+      type: "error",
+      text1: "Erro ao adicionar gasto mensal, tente novamente",
+      visibilityTime: 3000,
+    });
+  }
+}
 type ActivityMessage = {
   createdAt: string;
   messageInfo: string;

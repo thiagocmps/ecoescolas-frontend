@@ -4,6 +4,7 @@ import {
   StyleSheet,
   Platform,
   TouchableOpacity,
+  KeyboardAvoidingView,
 } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import Button from "../../components/button/button";
@@ -18,6 +19,7 @@ import {
   deleteRegistration,
   deleteActivity,
   useIsValidatedToActivity,
+  addMonthlyExpenseToRegistration,
 } from "../../services/api-requests";
 import { useNavigation, CommonActions } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
@@ -42,7 +44,9 @@ import {
 } from "../../services/api-requests";
 import { Divider } from "react-native-paper";
 import MultiInputList from "../../components/multi-input.list/multi-input-list";
-
+import CustomTextInput from "../../components/input/input";
+import { ScrollView } from "react-native-gesture-handler";
+import { TextInput } from "react-native";
 export default function ActivityInfoScreen() {
   const route = useRoute();
   const { creatorId, _id, title, type, description, date, info, message } =
@@ -75,6 +79,11 @@ export default function ActivityInfoScreen() {
   const [modalVisibleDeleteRegistration, setModalVisibleDeleteRegistration] =
     useState(false);
   const [modalVisibleAddImages, setModalVisibleAddImages] = useState(false);
+  const [modalVisibleAddExpense, setModalVisibleAddExpense] = useState(false);
+  const [inputTeste, setInputTeste] = useState("");
+  const [inputWater, setInputWater] = useState("");
+  const [inputLight, setInputLight] = useState("");
+  const [inputGas, setInputGas] = useState("");
   const [isLoadingButton, setIsLoadingButton] = useState(false);
   const [activityId, setActivityId] = useState<string | null>(null);
   const [userInformation, setUserInformation] = useState<string | null>(null);
@@ -116,7 +125,11 @@ export default function ActivityInfoScreen() {
   }, [message]);
 
   return (
-    <View style={localStyles.screenContainer}>
+    <KeyboardAvoidingView
+      style={localStyles.screenContainer}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
+    >
       <ListCard
         variant="members"
         onPressAdd={(item) => {
@@ -374,8 +387,9 @@ export default function ActivityInfoScreen() {
                     </Text>
                   </View>
                 )}
+
                 <Divider></Divider>
-                {isValidatedToActivity === true && (
+                {isValidatedToActivity === true && type == "normal" ? (
                   <View style={{ display: "flex", gap: 8 }}>
                     <ImagePickerMultiple
                       images={selectedActivityImages}
@@ -402,7 +416,50 @@ export default function ActivityInfoScreen() {
                       }}
                     />
                   </View>
-                )}
+                ) : isValidatedToActivity === true && type == "gasto_mensal" ? (
+                  <View style={{ gap: 8 }}>
+                    <CustomTextInput
+                      type="input"
+                      placeholder="Adicione aqui o gasto de água"
+                      onChangeText={setInputWater}
+                      value={inputWater}
+                      label="💧Gasto de água:"
+                      subLabel="(adicione aqui o gasto conforme a demanda da atividade)"
+                    />
+                    <CustomTextInput
+                      type="input"
+                      placeholder="Adicione aqui o gasto de luz"
+                      onChangeText={setInputLight}
+                      value={inputLight}
+                      label="💡Gasto de luz:"
+                      subLabel="(adicione aqui o gasto conforme a demanda da atividade)"
+                    />
+                    <CustomTextInput
+                      type="input"
+                      placeholder="Adicione aqui o gasto de gás"
+                      onChangeText={setInputGas}
+                      value={inputGas}
+                      label="☁️⚡🔥🌫️💨 Gasto de gás:"
+                      subLabel="(adicione aqui o gasto conforme a demanda da atividade)"
+                    />
+                    <Button /* botao */
+                      onPress={() => {
+                        if (!inputGas || !inputLight || !inputWater) {
+                          Toast.show({
+                            type: "error",
+                            text1: "Preencha todos os campos",
+                            position: "top",
+                            visibilityTime: 3000,
+                          });
+                          return;
+                        }
+                        setModalVisibleAddExpense(true);
+                      }}
+                      title="Enviar valor de contador"
+                      icon="cloud-upload-outline"
+                    ></Button>
+                  </View>
+                ) : undefined}
                 <View>
                   <Text style={[localStyles.title, { paddingTop: 24 }]}>
                     Membros
@@ -591,6 +648,47 @@ export default function ActivityInfoScreen() {
                 imagens existentes.
               </Text>
             </CustomModal>
+            <CustomModal
+              visible={modalVisibleAddExpense}
+              title="Adicionar gastos"
+              confirmText="Confirmar"
+              cancelText="Cancelar"
+              onClose={() => setModalVisibleAddExpense(false)}
+              onConfirm={async () => {
+                const monthlyExpense = {
+                  water: inputWater,
+                  light: inputLight,
+                  gas: inputGas,
+                };
+                console.log(userInformation);
+                console.log(activityId);
+                addMonthlyExpenseToRegistration(
+                  _id,
+                  userInfo?.data.id,
+                  monthlyExpense
+                ).then(() => {
+                  Toast.show({
+                    type: "success",
+                    text1: "Imagens adicionadas com sucesso! 😊",
+                    position: "top",
+                    visibilityTime: 3000,
+                  });
+                  refetch();
+                  setModalVisibleAddImages(false);
+                  navigation.goBack()
+                });
+              }}
+              onCancel={() => {
+                console.log("Utilizador não saiu");
+                setModalVisibleAddImages(false);
+              }}
+            >
+              <Text>
+                Tem certeza que deseja adicionar os gastos? Estas serão visíveis
+                para todos os membros da atividade e substituirão os gastos
+                existentes.
+              </Text>
+            </CustomModal>
           </View>
         )}
         onPress={(item) => {
@@ -598,11 +696,22 @@ export default function ActivityInfoScreen() {
         }}
       />
       <BackArrow background={true} />
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
 const localStyles = StyleSheet.create({
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    borderWidth: 1,
+    height: 50,
+    justifyContent: "center",
+    paddingHorizontal: 10,
+    borderColor: "#ccc",
+    borderRadius: 10,
+  },
   contentContainer: {
     flex: 1,
     padding: 16,
