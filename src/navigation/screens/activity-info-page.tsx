@@ -47,6 +47,12 @@ import MultiInputList from "../../components/multi-input.list/multi-input-list";
 import CustomTextInput from "../../components/input/input";
 import { ScrollView } from "react-native-gesture-handler";
 import { TextInput } from "react-native";
+/* import MonthlyExpenseInputs from "../../components/monthly-expense-inputs"; */
+import MonthlyExpenseInputs, {
+  MonthlyExpenseInputsRef,
+} from "../../components/monthly-expense-inputs";
+import { useRef } from "react";
+
 export default function ActivityInfoScreen() {
   const route = useRoute();
   const { creatorId, _id, title, type, description, date, info, message } =
@@ -80,10 +86,13 @@ export default function ActivityInfoScreen() {
     useState(false);
   const [modalVisibleAddImages, setModalVisibleAddImages] = useState(false);
   const [modalVisibleAddExpense, setModalVisibleAddExpense] = useState(false);
-  const [inputTeste, setInputTeste] = useState("");
-  const [inputWater, setInputWater] = useState("");
-  const [inputLight, setInputLight] = useState("");
-  const [inputGas, setInputGas] = useState("");
+  const [tempMonthlyExpense, setTempMonthlyExpense] = useState({
+    water: "",
+    light: "",
+    gas: "",
+  });
+  const monthlyExpenseRef = useRef<MonthlyExpenseInputsRef>(null);
+
   const [isLoadingButton, setIsLoadingButton] = useState(false);
   const [activityId, setActivityId] = useState<string | null>(null);
   const [userInformation, setUserInformation] = useState<string | null>(null);
@@ -389,6 +398,7 @@ export default function ActivityInfoScreen() {
                 )}
 
                 <Divider></Divider>
+                {/* convencional ou gasto mensal */}
                 {isValidatedToActivity === true && type == "normal" ? (
                   <View style={{ display: "flex", gap: 8 }}>
                     <ImagePickerMultiple
@@ -417,34 +427,13 @@ export default function ActivityInfoScreen() {
                     />
                   </View>
                 ) : isValidatedToActivity === true && type == "gasto_mensal" ? (
-                  <View style={{ gap: 8 }}>
-                    <CustomTextInput
-                      type="input"
-                      placeholder="Adicione aqui o gasto de água"
-                      onChangeText={setInputWater}
-                      value={inputWater}
-                      label="💧Gasto de água:"
-                      subLabel="(adicione aqui o gasto conforme a demanda da atividade)"
-                    />
-                    <CustomTextInput
-                      type="input"
-                      placeholder="Adicione aqui o gasto de luz"
-                      onChangeText={setInputLight}
-                      value={inputLight}
-                      label="💡Gasto de luz:"
-                      subLabel="(adicione aqui o gasto conforme a demanda da atividade)"
-                    />
-                    <CustomTextInput
-                      type="input"
-                      placeholder="Adicione aqui o gasto de gás"
-                      onChangeText={setInputGas}
-                      value={inputGas}
-                      label="☁️⚡🔥🌫️💨 Gasto de gás:"
-                      subLabel="(adicione aqui o gasto conforme a demanda da atividade)"
-                    />
+                  <>
+                    <MonthlyExpenseInputs ref={monthlyExpenseRef} />
+
                     <Button /* botao */
                       onPress={() => {
-                        if (!inputGas || !inputLight || !inputWater) {
+                        const values = monthlyExpenseRef.current?.getValues();
+                        if (!values?.water || !values?.light || !values?.gas) {
                           Toast.show({
                             type: "error",
                             text1: "Preencha todos os campos",
@@ -453,12 +442,13 @@ export default function ActivityInfoScreen() {
                           });
                           return;
                         }
+                        setTempMonthlyExpense(values);
                         setModalVisibleAddExpense(true);
                       }}
                       title="Enviar valor de contador"
                       icon="cloud-upload-outline"
                     ></Button>
-                  </View>
+                  </>
                 ) : undefined}
                 <View>
                   <Text style={[localStyles.title, { paddingTop: 24 }]}>
@@ -655,27 +645,22 @@ export default function ActivityInfoScreen() {
               cancelText="Cancelar"
               onClose={() => setModalVisibleAddExpense(false)}
               onConfirm={async () => {
-                const monthlyExpense = {
-                  water: inputWater,
-                  light: inputLight,
-                  gas: inputGas,
-                };
+                const values = monthlyExpenseRef.current?.getValues();
+                /*  const monthlyExpenseObject = {
+                  water: values?.water,
+                  light: values?.light,
+                  gas: values?.gas,
+                }; */
                 console.log(userInformation);
                 console.log(activityId);
                 addMonthlyExpenseToRegistration(
                   _id,
                   userInfo?.data.id,
-                  monthlyExpense
-                ).then(() => {
-                  Toast.show({
-                    type: "success",
-                    text1: "Imagens adicionadas com sucesso! 😊",
-                    position: "top",
-                    visibilityTime: 3000,
-                  });
-                  refetch();
+                  tempMonthlyExpense
+                ).then((response) => {
                   setModalVisibleAddImages(false);
-                  navigation.goBack()
+                  refetch();
+                  navigation.goBack();
                 });
               }}
               onCancel={() => {

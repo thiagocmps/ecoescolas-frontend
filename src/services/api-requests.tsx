@@ -4,7 +4,8 @@ import { useGetDecodedToken } from "../utilities/jwtoken-utilities";
 import { useState, useEffect } from "react";
 import Toast from "react-native-toast-message";
 import { View, Text } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+/* import { useNavigation } from "@react-navigation/native"; */
+import axios from "axios";
 
 export const registerToActivity = async (
   activityId: String,
@@ -43,7 +44,7 @@ export const createActivity = async (
   juris: string[],
   base64Image: string | null
 ) => {
-  console.log(type)
+  console.log(type);
   try {
     await api.post("/activities/add", {
       title: titulo,
@@ -534,7 +535,7 @@ export async function addImagesToRegistration(
   }
 }
 
-
+/* const navigation = useNavigation() */
 export async function addMonthlyExpenseToRegistration(
   activityId: string,
   userId: string | undefined,
@@ -546,19 +547,33 @@ export async function addMonthlyExpenseToRegistration(
       activityId: activityId,
       monthlyExpense: monthlyExpense,
     });
+
     Toast.show({
       type: "success",
-      text1: "Imagem adicionada!",
+      text1: "Gasto mensal adicionado com sucesso!",
       visibilityTime: 3000,
     });
+
     return response;
-  } catch (error) {
-    console.error("Erro ao adicionar gasto mensal:", error);
+  } catch (error: any) {
+    /* navigation.goBack() */
+    console.warn("Erro ao adicionar gasto mensal:", error);
+
+    let errorMessage = "Erro ao adicionar gasto mensal. Tente novamente.";
+
+    if (axios.isAxiosError(error) && error.response?.data?.message) {
+      errorMessage = error.response.data.message;
+    }
+
     Toast.show({
       type: "error",
-      text1: "Erro ao adicionar gasto mensal, tente novamente",
+      text1: "Erro ao guardar gasto", 
+      text2: errorMessage,
       visibilityTime: 3000,
     });
+    return;
+    // Rejeita para permitir que o chamador saiba que falhou
+    throw new Error(errorMessage);
   }
 }
 type ActivityMessage = {
@@ -583,7 +598,10 @@ export async function patchActivityMessages(
 
     return response;
   } catch (error: any) {
-    console.error("Erro ao atualizar atividade:", error?.response?.data || error);
+    console.error(
+      "Erro ao atualizar atividade:",
+      error?.response?.data || error
+    );
     Toast.show({
       type: "error",
       text1: "Erro ao atualizar mensagens, tente novamente",

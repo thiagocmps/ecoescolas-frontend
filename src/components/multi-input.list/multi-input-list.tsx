@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Platform } from "react-native";
 import Button from "../button/button";
 import { useState } from "react";
 import Input from "../input/input";
@@ -111,6 +111,8 @@ const localStyles = StyleSheet.create({
     fontSize: 16,
   },
   inputRow: {
+   /*  maxWidth: "80%", */
+    maxWidth: Platform.OS === "web" ? "100%" : "80%",
     flexDirection: "row",
     gap: 8,
     alignItems: "center",
