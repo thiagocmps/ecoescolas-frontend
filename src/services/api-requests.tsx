@@ -6,6 +6,8 @@ import Toast from "react-native-toast-message";
 import { View, Text } from "react-native";
 /* import { useNavigation } from "@react-navigation/native"; */
 import axios from "axios";
+import MonthlyExpenseInputs from "../components/monthly-expense-inputs";
+import { MonthlyExpense } from "../components/monthly-expense-inputs";
 
 export const registerToActivity = async (
   activityId: String,
@@ -539,7 +541,7 @@ export async function addImagesToRegistration(
 export async function addMonthlyExpenseToRegistration(
   activityId: string,
   userId: string | undefined,
-  monthlyExpense: Object
+  monthlyExpense: MonthlyExpense
 ) {
   try {
     const response = await api.put(`/activities/registrations/update`, {
@@ -567,7 +569,7 @@ export async function addMonthlyExpenseToRegistration(
 
     Toast.show({
       type: "error",
-      text1: "Erro ao guardar gasto", 
+      text1: "Erro ao guardar gasto",
       text2: errorMessage,
       visibilityTime: 3000,
     });
@@ -607,5 +609,26 @@ export async function patchActivityMessages(
       text1: "Erro ao atualizar mensagens, tente novamente",
       visibilityTime: 3000,
     });
+  }
+}
+
+export async function getRegistrationsByActivityAndUser(
+  activityId: string,
+  userId: string | undefined
+) {
+  try {
+    const response = await api.get('/activities/registrations/', {
+      params: { activityId, userId },
+    });
+    console.log(response)
+    return response.data; // geralmente a resposta já vem no data
+  } catch (error: any) {
+    console.error('Erro ao buscar registros:', error);
+    Toast.show({
+      type: 'error',
+      text1: 'Erro ao carregar registros, tente novamente',
+      visibilityTime: 3000,
+    });
+    return null;
   }
 }

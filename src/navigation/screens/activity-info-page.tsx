@@ -5,6 +5,7 @@ import {
   Platform,
   TouchableOpacity,
   KeyboardAvoidingView,
+  ActivityIndicator,
 } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import Button from "../../components/button/button";
@@ -31,7 +32,10 @@ import { useFetchOnFocus } from "../../utilities/fetch-on-focus";
 import { useCallback, useEffect } from "react";
 import { globalStyles } from "../../utilities/styles";
 import { useAsync } from "../../services/api-requests";
-import { getCreatorById } from "../../services/api-requests";
+import {
+  getCreatorById,
+  getRegistrationsByActivityAndUser,
+} from "../../services/api-requests";
 import { validateToActivity } from "../../services/api-requests";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import BackArrow from "../../components/back-arrow/back-arrow";
@@ -53,6 +57,7 @@ import MonthlyExpenseInputs, {
 } from "../../components/monthly-expense-inputs";
 import { useRef } from "react";
 
+import { FlatList } from "react-native-gesture-handler";
 export default function ActivityInfoScreen() {
   const route = useRoute();
   const { creatorId, _id, title, type, description, date, info, message } =
@@ -69,6 +74,40 @@ export default function ActivityInfoScreen() {
 
   const userInfo = useGetDecodedToken();
   const userId = userInfo?.data?.id;
+
+  const [userMonthlyExpenses, setUserMonthlyExpenses] = useState<
+    { water: string; light: string; gas: string; date: string; _id: string }[]
+  >([]);
+  const [loadingExpenses, setLoadingExpenses] = useState(false);
+
+  async function fetchUserMonthlyExpenses() {
+    if (!_id && !userId) return;
+    setLoadingExpenses(true);
+    try {
+      const data = await getRegistrationsByActivityAndUser(_id, userId);
+      if (data) {
+        // Supondo que cada registro tem a estrutura { _id, monthlyExpense: { water, light, gas, date } }
+        // Ajuste se a estrutura for diferente
+        const expenses = data.map((reg: any) => ({
+          _id: reg._id,
+          ...reg.monthlyExpense,
+        }));
+        setUserMonthlyExpenses(expenses);
+      }
+    } catch (error) {
+      Toast.show({
+        type: "error",
+        text1: "Erro ao carregar gastos mensais",
+      });
+    } finally {
+      setLoadingExpenses(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchUserMonthlyExpenses();
+  }, [_id, userId]);
+
   const base64Icon = `data:image/png;base64,${info.cover}`;
   const [validationUpdated, setValidationUpdated] = useState(false);
   const isValidatedToActivity = useIsValidatedToActivity(
@@ -90,6 +129,7 @@ export default function ActivityInfoScreen() {
     water: "",
     light: "",
     gas: "",
+    date: "",
   });
   const monthlyExpenseRef = useRef<MonthlyExpenseInputsRef>(null);
 
@@ -426,30 +466,85 @@ export default function ActivityInfoScreen() {
                       }}
                     />
                   </View>
-                ) : isValidatedToActivity === true && type == "gasto_mensal" ? (
-                  <>
-                    <MonthlyExpenseInputs ref={monthlyExpenseRef} />
+                ) : (
+                  isValidatedToActivity === true &&
+                  type == "gasto_mensal" && (
+                    <>
+                      <MonthlyExpenseInputs ref={monthlyExpenseRef} />
 
-                    <Button /* botao */
-                      onPress={() => {
-                        const values = monthlyExpenseRef.current?.getValues();
-                        if (!values?.water || !values?.light || !values?.gas) {
-                          Toast.show({
-                            type: "error",
-                            text1: "Preencha todos os campos",
-                            position: "top",
-                            visibilityTime: 3000,
+                      <Button
+                        onPress={() => {
+                          const values = monthlyExpenseRef.current?.getValues();
+                          if (
+                            !values?.water ||
+                            !values?.light ||
+                            !values?.gas ||
+                            !values?.date
+                          ) {
+                            Toast.show({
+                              type: "error",
+                              text1: "Preencha todos os campos",
+                              position: "top",
+                              visibilityTime: 3000,
+                            });
+                            return;
+                          }
+                          setTempMonthlyExpense({
+                            water: values.water,
+                            light: values.light,
+                            gas: values.gas,
+                            date: values.date,
                           });
-                          return;
-                        }
-                        setTempMonthlyExpense(values);
-                        setModalVisibleAddExpense(true);
-                      }}
-                      title="Enviar valor de contador"
-                      icon="cloud-upload-outline"
-                    ></Button>
-                  </>
-                ) : undefined}
+                          setModalVisibleAddExpense(true);
+                        }}
+                        title="Enviar valor de contador"
+                        icon="cloud-upload-outline"
+                      />
+
+                      <Text
+                        style={{
+                          fontWeight: "bold",
+                          marginTop: 24,
+                          fontSize: 18,
+                        }}
+                      >
+                        Histórico de gastos mensais
+                      </Text>
+
+                      {loadingExpenses ? (
+                        <ActivityIndicator style={{ marginTop: 12 }} />
+                      ) : userMonthlyExpenses.length === 0 ? (
+                        <Text style={{ marginTop: 12 }}>
+                          Nenhum gasto registrado ainda.
+                        </Text>
+                      ) : (
+                        <FlatList
+                          data={userMonthlyExpenses}
+                          keyExtractor={(item) => item._id}
+                          style={{ marginTop: 12, maxHeight: 250 }}
+                          renderItem={({ item }) => {
+                            const formattedDate = new Date(
+                              item.date
+                            ).toLocaleDateString(undefined, {
+                              year: "numeric",
+                              month: "long",
+                            });
+                            return (
+                              <View style={localStyles.expenseItem}>
+                                <Text style={{ fontWeight: "bold" }}>
+                                  {formattedDate}
+                                </Text>
+                                <Text>💧 Água: {item.water}</Text>
+                                <Text>💡 Luz: {item.light}</Text>
+                                <Text>🔥 Gás: {item.gas}</Text>
+                              </View>
+                            );
+                          }}
+                        />
+                      )}
+                    </>
+                  )
+                )}
                 <View>
                   <Text style={[localStyles.title, { paddingTop: 24 }]}>
                     Membros
@@ -653,12 +748,14 @@ export default function ActivityInfoScreen() {
                 }; */
                 console.log(userInformation);
                 console.log(activityId);
+                console.warn("☀️ Data: " + tempMonthlyExpense.date);
                 addMonthlyExpenseToRegistration(
                   _id,
                   userInfo?.data.id,
                   tempMonthlyExpense
                 ).then((response) => {
                   setModalVisibleAddImages(false);
+                  fetchUserMonthlyExpenses();
                   refetch();
                   navigation.goBack();
                 });
@@ -686,6 +783,12 @@ export default function ActivityInfoScreen() {
 }
 
 const localStyles = StyleSheet.create({
+  expenseItem: {
+    padding: 12,
+    marginBottom: 8,
+    backgroundColor: "#f0f0f0",
+    borderRadius: 6,
+  },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
